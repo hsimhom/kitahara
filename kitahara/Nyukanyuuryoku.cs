@@ -10,11 +10,12 @@ using System.Windows.Forms;
 
 namespace kitahara
 {
-    public partial class Form1 : Form
+    public partial class Nyukanyuuryoku : Form
     {
-        public Form1()
+        public Nyukanyuuryoku()
         {
             InitializeComponent();
         }
+         
     }
 }
