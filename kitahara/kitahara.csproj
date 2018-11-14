@@ -54,6 +54,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System\Windows\Forms\DataGridViewEX.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <EmbeddedResource Include="Nyukanyuryoku.resx">
       <DependentUpon>Nyukanyuryoku.cs</DependentUpon>
     </EmbeddedResource>
