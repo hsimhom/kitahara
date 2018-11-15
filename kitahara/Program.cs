@@ -17,6 +17,7 @@ namespace kitahara
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Nyukanyuryoku());
+            //Application.Run(new Sizecolor());
         }
     }
 }

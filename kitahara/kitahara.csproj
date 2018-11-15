@@ -54,6 +54,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sizecolor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sizecolor.Designer.cs">
+      <DependentUpon>Sizecolor.cs</DependentUpon>
+    </Compile>
     <Compile Include="System\Windows\Forms\DataGridViewEX.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -69,6 +75,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Sizecolor.resx">
+      <DependentUpon>Sizecolor.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

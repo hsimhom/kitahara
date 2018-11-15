@@ -14,12 +14,17 @@ namespace kitahara
     public partial class Nyukanyuryoku : Form
     {
         Boolean[] flgsizecolor = new Boolean[9];
-        int[,,] sizecolor = new int[9,10,10];
+        public int[,,] sizecolor = new int[10,11,11];
 
         public Nyukanyuryoku()
         {
             InitializeComponent();
 
+            InitGrid();
+        }
+
+        private void InitGrid()
+        {
             //サーバー接続
             string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67";
             MySqlConnection conn = new MySqlConnection(connstr);
@@ -47,9 +52,6 @@ namespace kitahara
             dataGridView1.Columns[5].HeaderText = "仕入金額";
             dataGridView1.Columns[5].ReadOnly = true;
             dataGridView1.Columns[6].HeaderText = "備考";
-
-
-
         }
 
 
@@ -78,6 +80,14 @@ namespace kitahara
             else if ((keyData & Keys.KeyCode) == Keys.F10)
             {
                 btnTouroku.PerformClick();
+            }
+            else if ((keyData & Keys.KeyCode) == Keys.F5)
+            {
+                btnCancel.PerformClick();
+            }
+            else if ((keyData & Keys.KeyCode) == Keys.F12)
+            {
+                btnEnd.PerformClick();
             }
 
             return base.ProcessDialogKey(keyData);
@@ -122,26 +132,36 @@ namespace kitahara
                         //Console.WriteLine(string.Join("\t", row));
                     }
 
-                    if (row2 == "True")
-                        flgsizecolor[dataGridView1.CurrentCellAddress.Y] = true;
-                    else
-                        flgsizecolor[dataGridView1.CurrentCellAddress.Y] = false;
-
                     dataGridView1[2, dataGridView1.CurrentCellAddress.Y].Value = row1;
                     dataGridView1.EndEdit();
+
+                    
                 }
                 else if (dataGridView1.CurrentCellAddress.X == 4)
-                {   // 0番目の列のいずれかのセルにフォーカスがある場合
-                    // 1番目の列にフォーカスを移動する（行は移動しない）
-                    //dataGridView1.CurrentCell = dataGridView1[3, dataGridView1.CurrentCellAddress.Y];
+                {   
                     dataGridView1[5, dataGridView1.CurrentCellAddress.Y].Value = int.Parse(dataGridView1[3, dataGridView1.CurrentCellAddress.Y].Value.ToString())
                         * int.Parse(dataGridView1[4, dataGridView1.CurrentCellAddress.Y].Value.ToString());
                     dataGridView1.EndEdit();
-                    //dataGridView1.Refresh();
-                    //dataGridView1.UpdateCellValue(5, dataGridView1.CurrentCellAddress.Y);
-                    //dataGridView1.CurrentCell = dataGridView1[6, dataGridView1.CurrentCellAddress.Y];
-                    
-                    
+
+                    //skuが"1"のとき、ダイアログを開く
+                    if (row2 == "True")
+                    {
+                        flgsizecolor[dataGridView1.CurrentCellAddress.Y] = true;
+
+                        Sizecolor sc = new Sizecolor();
+                        sc.ShowDialog();
+                        for (int i = 0; i < 11; i++)
+                        {
+                            for (int j = 0; j < 11; j++)
+                            {
+                                sizecolor[dataGridView1.CurrentCellAddress.Y, i, j] = sc.scdata[i, j];
+                            }
+                        }
+                        sc.Dispose();
+                    }
+                    else
+                        flgsizecolor[dataGridView1.CurrentCellAddress.Y] = false;
+
                 }
             }
         }
@@ -246,19 +266,76 @@ namespace kitahara
 
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void Insertdata()
         {
 
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            //メッセージボックスを表示する
+            DialogResult result = MessageBox.Show("取消しますか？",
+                "質問",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Exclamation,
+                MessageBoxDefaultButton.Button2);
+
+            //何が選択されたか調べる
+            if (result == DialogResult.Yes)
+            {
+                //「はい」が選択された時
+                InitGrid();
+            }
+            else if (result == DialogResult.No)
+            {
+                //「いいえ」が選択された時
+                return;
+            }
         }
 
         private void btnTouroku_Click(object sender, EventArgs e)
         {
+            //メッセージボックスを表示する
+            DialogResult result = MessageBox.Show("登録しますか？",
+                "質問",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Exclamation,
+                MessageBoxDefaultButton.Button2);
 
+            //何が選択されたか調べる
+            if (result == DialogResult.Yes)
+            {
+                //「はい」が選択された時
+                Insertdata();
+            }
+            else if (result == DialogResult.No)
+            {
+                //「いいえ」が選択された時
+                return;
+            }
         }
 
         private void btnEnd_Click(object sender, EventArgs e)
         {
+            //メッセージボックスを表示する
+            DialogResult result = MessageBox.Show("終了しますか？",
+                "質問",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Exclamation,
+                MessageBoxDefaultButton.Button2);
 
+            //何が選択されたか調べる
+            if (result == DialogResult.Yes)
+            {
+                //「はい」が選択された時
+                this.Close();
+                this.Dispose();
+            }
+            else if (result == DialogResult.No)
+            {
+                //「いいえ」が選択された時
+                return;
+            }
         }
     }
 }
