@@ -44,16 +44,27 @@ namespace kitahara
             dataGridView1.Columns[0].HeaderText = "";
             dataGridView1.Columns[0].ReadOnly = true;
             dataGridView1.Columns[1].HeaderText = "フリー";
+            dataGridView1.Columns[1].Width = 80;
             dataGridView1.Columns[2].HeaderText = "Ş";
+            dataGridView1.Columns[2].Width = 80;
             dataGridView1.Columns[3].HeaderText = "M";
+            dataGridView1.Columns[3].Width = 80;
             dataGridView1.Columns[4].HeaderText = "L";
+            dataGridView1.Columns[4].Width = 80;
             dataGridView1.Columns[5].HeaderText = "LL";
+            dataGridView1.Columns[5].Width = 80;
             dataGridView1.Columns[6].HeaderText = "３L";
+            dataGridView1.Columns[6].Width = 80;
             dataGridView1.Columns[7].HeaderText = "４L";
+            dataGridView1.Columns[7].Width = 80;
             dataGridView1.Columns[8].HeaderText = "５L";
+            dataGridView1.Columns[8].Width = 80;
             dataGridView1.Columns[9].HeaderText = "６L";
+            dataGridView1.Columns[9].Width = 80;
             dataGridView1.Columns[10].HeaderText = "　";
+            dataGridView1.Columns[10].Width = 80;
             dataGridView1.Columns[11].HeaderText = "　";
+            dataGridView1.Columns[11].Width = 80;
         }
 
         //DataGridView以外のコントロールのキー押下検知
