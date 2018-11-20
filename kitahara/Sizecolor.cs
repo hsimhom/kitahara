@@ -14,6 +14,7 @@ namespace kitahara
     public partial class Sizecolor : Form
     {
         public int[,] scdata = new int[11,11];
+        public int total = 0;
 
         public Sizecolor()
         {
@@ -77,10 +78,10 @@ namespace kitahara
             if ((keyData & Keys.KeyCode) == Keys.Enter)
             {
                 //check_textbox();
-                this.SelectNextControl(this.ActiveControl, true, true, true, true);
+                //this.SelectNextControl(this.ActiveControl, true, true, true, true);
                 //本来の処理（左側のコントロールにフォーカスを移す）を
                 //させたくないときは、trueを返す
-                return true;
+                //return true;
             }
             //Tabキーが押されているか調べる
             else if ((keyData & Keys.KeyCode) == Keys.Tab)
@@ -93,26 +94,36 @@ namespace kitahara
             {
                 btnTouroku.PerformClick();
             }
+            else if ((keyData & Keys.KeyCode) == Keys.F5)
+            {
+                btnCancel.PerformClick();
+            }
 
             return base.ProcessDialogKey(keyData);
         }
 
         private void dataGridView1_KeyDown(object sender, KeyEventArgs e)
         {
-
+            if (e.KeyData == Keys.Enter)
+            {
+                SendKeys.Send("{TAB}");
+                e.Handled = true;
+            }
         }
 
         private void dataGridView1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Tab)
             {
-                int sum = 0;
-                for (int i = 0; i < 11; i++)
-                {
-                    sum += int.Parse(dataGridView1[dataGridView1.CurrentCellAddress.X, i].Value.ToString());
+                if (dataGridView1.CurrentCellAddress.X != 0) {
+                    int sum = 0;
+                    for (int i = 0; i < 11; i++)
+                    {
+                        sum += int.Parse(dataGridView1[dataGridView1.CurrentCellAddress.X, i].Value.ToString());
+                    }
+                    dataGridView1[dataGridView1.CurrentCellAddress.X, 11].Value = sum.ToString();
+                    dataGridView1.EndEdit();
                 }
-                dataGridView1[dataGridView1.CurrentCellAddress.X, 11].Value = sum.ToString();
-                dataGridView1.EndEdit();
             }
         }
 
@@ -176,7 +187,9 @@ namespace kitahara
                     {
                         scdata[i, j] = int.Parse(dataGridView1[i+1, j].Value.ToString());
                     }
+                    total += int.Parse(dataGridView1[i+1, 11].Value.ToString());
                 }
+
                 this.Close();
             }
             else if (result == DialogResult.No)
@@ -205,6 +218,17 @@ namespace kitahara
             {
                 //「いいえ」が選択された時
                 return;
+            }
+        }
+
+        private void dataGridView1_CellEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            switch (dataGridView1.CurrentCellAddress.X)
+            {
+                case 0:
+                    Action a = () => dataGridView1.CurrentCell = dataGridView1[1, dataGridView1.CurrentCellAddress.Y];
+                    BeginInvoke(a);
+                    break;
             }
         }
     }
