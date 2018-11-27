@@ -102,50 +102,7 @@ namespace kitahara
             return base.ProcessDialogKey(keyData);
         }
 
-        private void dataGridView1_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyData == Keys.Enter)
-            {
-                SendKeys.Send("{TAB}");
-                e.Handled = true;
-            }
-        }
-
-        private void dataGridView1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Tab)
-            {
-                if (dataGridView1.CurrentCellAddress.X != 0) {
-                    int sum = 0;
-                    for (int i = 0; i < 11; i++)
-                    {
-                        sum += int.Parse(dataGridView1[dataGridView1.CurrentCellAddress.X, i].Value.ToString());
-                    }
-                    dataGridView1[dataGridView1.CurrentCellAddress.X, 11].Value = sum.ToString();
-                    dataGridView1.EndEdit();
-                }
-            }
-        }
-
-        private void dataGridView1_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
-        {
-            //表示されているコントロールがDataGridViewTextBoxEditingControlか調べる
-            if (e.Control is DataGridViewTextBoxEditingControl)
-            {
-                DataGridView dgv = (DataGridView)sender;
-
-                //編集のために表示されているコントロールを取得
-                DataGridViewTextBoxEditingControl tb =
-                    (DataGridViewTextBoxEditingControl)e.Control;
-
-                //イベントハンドラを削除
-                tb.KeyDown -= dataGridView1_KeyDown;
-                tb.PreviewKeyDown -= dataGridView1_PreviewKeyDown;
-                tb.KeyDown += dataGridView1_KeyDown;
-                tb.PreviewKeyDown += dataGridView1_PreviewKeyDown;
-            }
-        }
-
+        
         private void btnCancel_Click(object sender, EventArgs e)
         {
             //メッセージボックスを表示する
@@ -170,6 +127,7 @@ namespace kitahara
 
         private void btnTouroku_Click(object sender, EventArgs e)
         {
+            dataGridView1.EndEdit();
             //メッセージボックスを表示する
             DialogResult result = MessageBox.Show("登録しますか？",
                 "質問",
@@ -221,7 +179,9 @@ namespace kitahara
             }
         }
 
-        private void dataGridView1_CellEnter(object sender, DataGridViewCellEventArgs e)
+        
+
+        private void dataGridView1_CellEnter_1(object sender, DataGridViewCellEventArgs e)
         {
             switch (dataGridView1.CurrentCellAddress.X)
             {
@@ -229,6 +189,51 @@ namespace kitahara
                     Action a = () => dataGridView1.CurrentCell = dataGridView1[1, dataGridView1.CurrentCellAddress.Y];
                     BeginInvoke(a);
                     break;
+            }
+        }
+
+        private void dataGridView1_EditingControlShowing_1(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            //表示されているコントロールがDataGridViewTextBoxEditingControlか調べる
+            if (e.Control is DataGridViewTextBoxEditingControl)
+            {
+                DataGridView dgv = (DataGridView)sender;
+
+                //編集のために表示されているコントロールを取得
+                DataGridViewTextBoxEditingControl tb =
+                    (DataGridViewTextBoxEditingControl)e.Control;
+
+                //イベントハンドラを削除
+                tb.KeyDown -= dataGridView1_KeyDown_1;
+                tb.PreviewKeyDown -= dataGridView1_PreviewKeyDown_1;
+                tb.KeyDown += dataGridView1_KeyDown_1;
+                tb.PreviewKeyDown += dataGridView1_PreviewKeyDown_1;
+            }
+        }
+
+        private void dataGridView1_PreviewKeyDown_1(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Tab)
+            {
+                if (dataGridView1.CurrentCellAddress.X != 0)
+                {
+                    int sum = 0;
+                    for (int i = 0; i < 11; i++)
+                    {
+                        sum += int.Parse(dataGridView1[dataGridView1.CurrentCellAddress.X, i].Value.ToString());
+                    }
+                    dataGridView1[dataGridView1.CurrentCellAddress.X, 11].Value = sum.ToString();
+                    dataGridView1.EndEdit();
+                }
+            }
+        }
+
+        private void dataGridView1_KeyDown_1(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                SendKeys.Send("{TAB}");
+                e.Handled = true;
             }
         }
     }

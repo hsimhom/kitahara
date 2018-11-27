@@ -28,9 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel2 = new System.Windows.Forms.Panel();
             this.btnTouroku = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -44,17 +42,17 @@
             this.panel2.BackColor = System.Drawing.SystemColors.ControlDark;
             this.panel2.Controls.Add(this.btnTouroku);
             this.panel2.Controls.Add(this.btnCancel);
-            this.panel2.Location = new System.Drawing.Point(-2, 287);
+            this.panel2.Location = new System.Drawing.Point(-2, 311);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(992, 42);
+            this.panel2.Size = new System.Drawing.Size(1157, 46);
             this.panel2.TabIndex = 3;
             // 
             // btnTouroku
             // 
             this.btnTouroku.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.btnTouroku.Location = new System.Drawing.Point(508, 10);
+            this.btnTouroku.Location = new System.Drawing.Point(593, 11);
             this.btnTouroku.Name = "btnTouroku";
-            this.btnTouroku.Size = new System.Drawing.Size(75, 23);
+            this.btnTouroku.Size = new System.Drawing.Size(87, 25);
             this.btnTouroku.TabIndex = 6;
             this.btnTouroku.TabStop = false;
             this.btnTouroku.Text = "F10:登録";
@@ -64,9 +62,9 @@
             // btnCancel
             // 
             this.btnCancel.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.btnCancel.Location = new System.Drawing.Point(336, 10);
+            this.btnCancel.Location = new System.Drawing.Point(392, 11);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.Size = new System.Drawing.Size(87, 25);
             this.btnCancel.TabIndex = 5;
             this.btnCancel.TabStop = false;
             this.btnCancel.Text = "F5:取消";
@@ -75,45 +73,34 @@
             // 
             // dataGridView1
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.InfoText;
-            this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
+            this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.Yellow;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle5;
-            this.dataGridView1.Location = new System.Drawing.Point(-2, 0);
-            this.dataGridView1.MultiSelect = false;
+            this.dataGridView1.Location = new System.Drawing.Point(-2, 1);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
-            dataGridViewCellStyle6.BackColor = System.Drawing.Color.White;
-            this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle6;
             this.dataGridView1.RowTemplate.Height = 21;
-            this.dataGridView1.Size = new System.Drawing.Size(992, 281);
-            this.dataGridView1.TabIndex = 1;
-            this.dataGridView1.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellEnter);
-            this.dataGridView1.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView1_EditingControlShowing);
-            this.dataGridView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridView1_KeyDown);
-            this.dataGridView1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.dataGridView1_PreviewKeyDown);
+            this.dataGridView1.Size = new System.Drawing.Size(1157, 303);
+            this.dataGridView1.TabIndex = 4;
+            this.dataGridView1.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellEnter_1);
+            this.dataGridView1.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView1_EditingControlShowing_1);
+            this.dataGridView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridView1_KeyDown_1);
+            this.dataGridView1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.dataGridView1_PreviewKeyDown_1);
             // 
             // Sizecolor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(993, 331);
-            this.Controls.Add(this.panel2);
+            this.ClientSize = new System.Drawing.Size(1158, 359);
             this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.panel2);
+            this.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.MaximizeBox = false;
             this.Name = "Sizecolor";
             this.ShowIcon = false;
-            this.Text = "Sizecolor";
+            this.Text = "サイズと色";
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
@@ -126,5 +113,6 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button btnTouroku;
         private System.Windows.Forms.Button btnCancel;
+        //private System.Windows.Forms.DataGridView dataGridView1;
     }
 }

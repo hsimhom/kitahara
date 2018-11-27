@@ -57,25 +57,25 @@ namespace kitahara
             da.Fill(dt);
 
             // データ表示
-            dataGridView1.DataSource = dt;
+            dataGridView2.DataSource = dt;
 
-            dataGridView1.Columns[0].HeaderText = "No";
-            dataGridView1.Columns[0].Width = 30;
-            dataGridView1.Columns[0].ReadOnly = true;
-            dataGridView1.Columns[1].HeaderText = "品番";
-            dataGridView1.Columns[1].Width = 100;
-            dataGridView1.Columns[2].HeaderText = "商品名";
-            dataGridView1.Columns[2].Width = 200;
-            dataGridView1.Columns[2].ReadOnly = true;
-            dataGridView1.Columns[3].HeaderText = "入荷数";
-            dataGridView1.Columns[3].Width = 75;
-            dataGridView1.Columns[4].HeaderText = "単価";
-            dataGridView1.Columns[4].Width = 75;
-            dataGridView1.Columns[5].HeaderText = "仕入金額";
-            dataGridView1.Columns[5].Width = 80;
-            dataGridView1.Columns[5].ReadOnly = true;
-            dataGridView1.Columns[6].HeaderText = "備考";
-            dataGridView1.Columns[6].Width = 200;
+            dataGridView2.Columns[0].HeaderText = "No";
+            dataGridView2.Columns[0].Width = 30;
+            dataGridView2.Columns[0].ReadOnly = true;
+            dataGridView2.Columns[1].HeaderText = "品番";
+            dataGridView2.Columns[1].Width = 100;
+            dataGridView2.Columns[2].HeaderText = "商品名";
+            dataGridView2.Columns[2].Width = 200;
+            dataGridView2.Columns[2].ReadOnly = true;
+            dataGridView2.Columns[3].HeaderText = "入荷数";
+            dataGridView2.Columns[3].Width = 75;
+            dataGridView2.Columns[4].HeaderText = "単価";
+            dataGridView2.Columns[4].Width = 75;
+            dataGridView2.Columns[5].HeaderText = "仕入金額";
+            dataGridView2.Columns[5].Width = 80;
+            dataGridView2.Columns[5].ReadOnly = true;
+            dataGridView2.Columns[6].HeaderText = "備考";
+            dataGridView2.Columns[6].Width = 200;
         }
 
 
@@ -117,132 +117,7 @@ namespace kitahara
             return base.ProcessDialogKey(keyData);
         }
 
-        private void DataGridView1_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyData == Keys.Enter)
-            {
-                switch (dataGridView1.CurrentCellAddress.X)
-                {
-                    case 3:
-                        if (flgtotal)
-                            dataGridView1[3, dataGridView1.CurrentCellAddress.Y].Value = total;
-                        break;
-                }
-                SendKeys.Send("{TAB}");
-                e.Handled = true;
-            }
-        }
-
-        private void dataGridView1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {           
-            if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Tab)
-            {
-                //dataGridView1.EndEdit();
-                if (dataGridView1.CurrentCellAddress.X == 1)
-                {
-                    dataGridView1.EndEdit();
-                    //サーバー接続
-                    string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
-                    MySqlConnection conn = new MySqlConnection(connstr);
-                    conn.Open();
-
-                    //SQL実行
-                    MySqlCommand cmd = new MySqlCommand("SELECT shohinmei, sku FROM shohin where shocd = '" + dataGridView1[1, dataGridView1.CurrentCellAddress.Y].Value.ToString() + "'", conn);
-                    MySqlDataReader reader = cmd.ExecuteReader();
-
-
-                    if (!reader.HasRows)
-                    {
-                        if (!flgcell2)
-                            MessageBox.Show("該当する商品がありません。","エラー",MessageBoxButtons.OK,MessageBoxIcon.Error);
-                        flgcell2 = true;
-                        dataGridView1.CurrentCell = dataGridView1[1, dataGridView1.CurrentCellAddress.Y];
-                        return;
-                    }
-
-                    
-                    //テーブル出力
-                    while (reader.Read())
-                    {
-                        row1 = reader["shohinmei"].ToString();
-                        row2 = reader["sku"].ToString();
-                        //Console.WriteLine(string.Join("\t", row));
-                    }
-
-                    dataGridView1[2, dataGridView1.CurrentCellAddress.Y].Value = row1;
-                    dataGridView1.EndEdit();
-
-                    
-                }
-                else if (dataGridView1.CurrentCellAddress.X == 3)
-                {
-                    //skuが"1"のとき、ダイアログを開く
-                    if (row2 == "True")
-                    {
-                        flgsizecolor[dataGridView1.CurrentCellAddress.Y] = true;
-
-                        Sizecolor sc = new Sizecolor();
-                        sc.ShowDialog();
-                        for (int i = 0; i < 11; i++)
-                        {
-                            for (int j = 0; j < 11; j++)
-                            {
-                                sizecolor[dataGridView1.CurrentCellAddress.Y, i, j] = sc.scdata[i, j];
-                            }
-                        }
-                        dataGridView1[3, dataGridView1.CurrentCellAddress.Y].Value = sc.total;
-                        total = sc.total;
-                        flgtotal = true;
-                        //dataGridView1.EndEdit();
-                        flgcell1 = true;
-                        sc.Dispose();
-                        row2 = "False";
-                        //dataGridView1.CurrentCell = dataGridView1[3, dataGridView1.CurrentCellAddress.Y];
-                    }
-                    else
-                    {
-                        flgtotal = false;
-                        flgsizecolor[dataGridView1.CurrentCellAddress.Y] = false;
-                        flgcell1 = true;
-                    }
-                    dataGridView1.CurrentCell = dataGridView1[4, dataGridView1.CurrentCellAddress.Y];
-
-                }
-                else if (dataGridView1.CurrentCellAddress.X == 4)
-                {
-                    
-                    //    dataGridView1[5, dataGridView1.CurrentCellAddress.Y].Value = int.Parse(dataGridView1[3, dataGridView1.CurrentCellAddress.Y].Value.ToString())
-                    //        * int.Parse(dataGridView1[4, dataGridView1.CurrentCellAddress.Y].Value.ToString());
-                    
-                    //dataGridView1.EndEdit();
-                }
-            }
-            else if (e.KeyCode == Keys.F1 || e.KeyCode == Keys.Up)
-            {
-                txtSiiresaki.Focus();
-                dataGridView1.CurrentCell = null;
-            }
-        }
-
-        private void dataGridView1_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
-        {
-            //表示されているコントロールがDataGridViewTextBoxEditingControlか調べる
-            if (e.Control is DataGridViewTextBoxEditingControl)
-            {
-                DataGridView dgv = (DataGridView)sender;
-
-                //編集のために表示されているコントロールを取得
-                DataGridViewTextBoxEditingControl tb =
-                    (DataGridViewTextBoxEditingControl)e.Control;
-
-                //イベントハンドラを削除
-                tb.KeyDown -= DataGridView1_KeyDown;
-                tb.PreviewKeyDown -= dataGridView1_PreviewKeyDown;
-                tb.KeyDown += DataGridView1_KeyDown;
-                tb.PreviewKeyDown += dataGridView1_PreviewKeyDown;
-            }
-        }
-
+        
         private void check_textbox()
         {
             Control cControl = this.ActiveControl;
@@ -320,7 +195,7 @@ namespace kitahara
                             row = reader["shiresakimei"].ToString();
                         }
                         txtSiiresakimei.Text = row;
-                        dataGridView1.Focus();
+                        dataGridView2.Focus();
                     }
                     else
                     {
@@ -344,7 +219,7 @@ namespace kitahara
 
             while (i < 10)
             {
-                if (dataGridView1[1, i].Value.ToString() != "")
+                if (dataGridView2[1, i].Value.ToString() != "")
                 {
                     if (flgsizecolor[i])
                     {
@@ -380,12 +255,12 @@ namespace kitahara
                         cmd.Parameters.Add(new MySqlParameter("nyukasoko", txtNyukasouko.Text));
                         cmd.Parameters.Add(new MySqlParameter("nyukaymd", dt));
                         cmd.Parameters.Add(new MySqlParameter("shiresaki", txtSiiresaki.Text));
-                        cmd.Parameters.Add(new MySqlParameter("hinban", dataGridView1[1, i].Value));
-                        cmd.Parameters.Add(new MySqlParameter("shohinmei", dataGridView1[2, i].Value));
-                        cmd.Parameters.Add(new MySqlParameter("syukasu", dataGridView1[3, i].Value));
-                        cmd.Parameters.Add(new MySqlParameter("tanka", dataGridView1[4, i].Value));
-                        cmd.Parameters.Add(new MySqlParameter("urikin", dataGridView1[5, i].Value));
-                        cmd.Parameters.Add(new MySqlParameter("biko", dataGridView1[6, i].Value));
+                        cmd.Parameters.Add(new MySqlParameter("hinban", dataGridView2[1, i].Value));
+                        cmd.Parameters.Add(new MySqlParameter("shohinmei", dataGridView2[2, i].Value));
+                        cmd.Parameters.Add(new MySqlParameter("syukasu", dataGridView2[3, i].Value));
+                        cmd.Parameters.Add(new MySqlParameter("tanka", dataGridView2[4, i].Value));
+                        cmd.Parameters.Add(new MySqlParameter("urikin", dataGridView2[5, i].Value));
+                        cmd.Parameters.Add(new MySqlParameter("biko", dataGridView2[6, i].Value));
                         cmd.Parameters.Add(new MySqlParameter("sku10", sizecolor[i, 0, 0]));
                         cmd.Parameters.Add(new MySqlParameter("sku11", sizecolor[i, 1, 0]));
                         cmd.Parameters.Add(new MySqlParameter("sku12", sizecolor[i, 2, 0]));
@@ -536,12 +411,12 @@ namespace kitahara
                         cmd.Parameters.Add(new MySqlParameter("nyukasoko", txtNyukasouko.Text));
                         cmd.Parameters.Add(new MySqlParameter("nyukaymd", dt));
                         cmd.Parameters.Add(new MySqlParameter("shiresaki", txtSiiresaki.Text));
-                        cmd.Parameters.Add(new MySqlParameter("hinban", dataGridView1[1, i].Value));
-                        cmd.Parameters.Add(new MySqlParameter("shohinmei", dataGridView1[2, i].Value));
-                        cmd.Parameters.Add(new MySqlParameter("syukasu", dataGridView1[3, i].Value));
-                        cmd.Parameters.Add(new MySqlParameter("tanka", dataGridView1[4, i].Value));
-                        cmd.Parameters.Add(new MySqlParameter("urikin", dataGridView1[5, i].Value));
-                        cmd.Parameters.Add(new MySqlParameter("biko", dataGridView1[6, i].Value));
+                        cmd.Parameters.Add(new MySqlParameter("hinban", dataGridView2[1, i].Value));
+                        cmd.Parameters.Add(new MySqlParameter("shohinmei", dataGridView2[2, i].Value));
+                        cmd.Parameters.Add(new MySqlParameter("syukasu", dataGridView2[3, i].Value));
+                        cmd.Parameters.Add(new MySqlParameter("tanka", dataGridView2[4, i].Value));
+                        cmd.Parameters.Add(new MySqlParameter("urikin", dataGridView2[5, i].Value));
+                        cmd.Parameters.Add(new MySqlParameter("biko", dataGridView2[6, i].Value));
                         MySqlCommand cmd2 = new MySqlCommand("SELECT LAST_INSERT_ID()", conn);
                         try
                         {
@@ -563,9 +438,9 @@ namespace kitahara
 
                     MySqlCommand cmd1 = new MySqlCommand("update shohin set zaiko = zaiko + @zaiko, nyukasu = nyukasu + @zaiko, nyukabi = @nyukabi where shocd = @shocd", conn);
                     // パラメータ設定
-                    cmd1.Parameters.Add(new MySqlParameter("zaiko", dataGridView1[3, i].Value));
+                    cmd1.Parameters.Add(new MySqlParameter("zaiko", dataGridView2[3, i].Value));
                     cmd1.Parameters.Add(new MySqlParameter("nyukabi", DateTime.Today));
-                    cmd1.Parameters.Add(new MySqlParameter("shocd", dataGridView1[1, i].Value));
+                    cmd1.Parameters.Add(new MySqlParameter("shocd", dataGridView2[1, i].Value));
 
                     //MySqlCommand cmd2 = new MySqlCommand("SELECT LAST_INSERT_ID()", conn);
                     try
@@ -605,7 +480,7 @@ namespace kitahara
             {
                 //「はい」が選択された時
                 InitGrid();
-                //dataGridView1.CurrentCell = null;
+                //dataGridView2.CurrentCell = null;
             }
             else if (result == DialogResult.No)
             {
@@ -662,76 +537,43 @@ namespace kitahara
             }
         }
 
-        private void dataGridView1_CellEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            switch (dataGridView1.CurrentCellAddress.X)
-            {
-                // （No）
-                case 0:
-                    Action a = () => dataGridView1.CurrentCell = dataGridView1[1, dataGridView1.CurrentCellAddress.Y];
-                    BeginInvoke(a);
-                    break;
-                // 商品名
-                case 2:
-                    a = () => dataGridView1.CurrentCell = dataGridView1[3, dataGridView1.CurrentCellAddress.Y];
-                    BeginInvoke(a);
-                    //dataGridView1.EndEdit();
-                    break;
-                    
-                // 入荷数
-                case 3:
-                    if (flgcell2)
-                    {
-                        a = () => dataGridView1.CurrentCell = dataGridView1[1, dataGridView1.CurrentCellAddress.Y];
-                        BeginInvoke(a);
-                        flgcell2 = false;
-                    }
-                    if (flgcell3)
-                        flgcell3 = false;
-                    break;
-                    
-                // 単価
-                case 4:
-                    if (flgcell3)
-                    {
-                        a = () => dataGridView1.CurrentCell = dataGridView1[3, dataGridView1.CurrentCellAddress.Y];
-                        BeginInvoke(a);
-                        flgcell3 = false;
-                    }
-                    break;
-                // 仕入金額
-                case 5:
-                    a = () => dataGridView1.CurrentCell = dataGridView1[6, dataGridView1.CurrentCellAddress.Y];
-                    BeginInvoke(a);
-                    break;
-                // 備考
-                case 6:
-                    if (flgcell1)
-                    {
-                        a = () => dataGridView1.CurrentCell = dataGridView1[4, dataGridView1.CurrentCellAddress.Y];
-                        BeginInvoke(a);
-                        flgcell1 = false;
-                    }
-                    if (flgcell4)
-                    {
-                        a = () => dataGridView1.CurrentCell = dataGridView1[4, dataGridView1.CurrentCellAddress.Y];
-                        BeginInvoke(a);
-                        flgcell4 = false;
-                    }
-                    break;
-            }
-            
-        }
-
+        
         private void Nyukanyuryoku_Shown(object sender, EventArgs e)
         {
-            dataGridView1.CurrentCell = null;
+            dataGridView2.CurrentCell = null;
         }
 
-        private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        
+        
+        private void dataGridView2_CellParsing_1(object sender, DataGridViewCellParsingEventArgs e)
+        {
+            switch (dataGridView2.CurrentCellAddress.X)
+            {
+                case 3:
+                    //dataGridView2[3, dataGridView2.CurrentCellAddress.Y].Value = total;
+                    break;
+                case 4:
+
+                    Action a = () => dataGridView2.CurrentCell = dataGridView2[6, dataGridView2.CurrentCellAddress.Y];
+                    BeginInvoke(a);
+                    break;
+            }
+        }
+
+        private void dataGridView2_CellValidated(object sender, DataGridViewCellEventArgs e)
+        {
+            switch (dataGridView2.CurrentCellAddress.X)
+            {
+                case 3:
+                    //dataGridView2[3, dataGridView2.CurrentCellAddress.Y].Value = total;
+                    break;
+            }
+        }
+
+        private void dataGridView2_CellValidating_1(object sender, DataGridViewCellValidatingEventArgs e)
         {
             DataGridViewEx dgv = (DataGridViewEx)sender;
-            switch (dataGridView1.CurrentCellAddress.X)
+            switch (dataGridView2.CurrentCellAddress.X)
             {
                 case 3:
                     if (e.FormattedValue.ToString() == "")
@@ -742,7 +584,7 @@ namespace kitahara
                         //キャンセルする
                         e.Cancel = true;
                     }
-                    //dataGridView1[3, dataGridView1.CurrentCellAddress.Y].Value = total;
+                    //dataGridView2[3, dataGridView2.CurrentCellAddress.Y].Value = total;
                     break;
                 case 4:
                     if (e.FormattedValue.ToString() == "")
@@ -758,35 +600,196 @@ namespace kitahara
                     }
                     break;
                 case 5:
-                    dataGridView1[5, dataGridView1.CurrentCellAddress.Y].Value = int.Parse(dataGridView1[3, dataGridView1.CurrentCellAddress.Y].Value.ToString())
-                        * int.Parse(dataGridView1[4, dataGridView1.CurrentCellAddress.Y].Value.ToString());
+                    dataGridView2[5, dataGridView2.CurrentCellAddress.Y].Value = int.Parse(dataGridView2[3, dataGridView2.CurrentCellAddress.Y].Value.ToString())
+                        * int.Parse(dataGridView2[4, dataGridView2.CurrentCellAddress.Y].Value.ToString());
 
                     break;
             }
         }
 
-        private void dataGridView1_CellValidated(object sender, DataGridViewCellEventArgs e)
+        private void dataGridView2_CellEnter_1(object sender, DataGridViewCellEventArgs e)
         {
-            switch (dataGridView1.CurrentCellAddress.X)
+            switch (dataGridView2.CurrentCellAddress.X)
             {
-                case 3:
-                    //dataGridView1[3, dataGridView1.CurrentCellAddress.Y].Value = total;
-                    break;
-            }
-        }
-
-        private void dataGridView1_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
-        {
-            switch (dataGridView1.CurrentCellAddress.X)
-            {
-                case 3:
-                    //dataGridView1[3, dataGridView1.CurrentCellAddress.Y].Value = total;
-                    break;
-                case 4:
-
-                    Action a = () => dataGridView1.CurrentCell = dataGridView1[6, dataGridView1.CurrentCellAddress.Y];
+                // （No）
+                case 0:
+                    Action a = () => dataGridView2.CurrentCell = dataGridView2[1, dataGridView2.CurrentCellAddress.Y];
                     BeginInvoke(a);
                     break;
+                // 商品名
+                case 2:
+                    a = () => dataGridView2.CurrentCell = dataGridView2[3, dataGridView2.CurrentCellAddress.Y];
+                    BeginInvoke(a);
+                    //dataGridView2.EndEdit();
+                    break;
+
+                // 入荷数
+                case 3:
+                    if (flgcell2)
+                    {
+                        a = () => dataGridView2.CurrentCell = dataGridView2[1, dataGridView2.CurrentCellAddress.Y];
+                        BeginInvoke(a);
+                        flgcell2 = false;
+                    }
+                    if (flgcell3)
+                        flgcell3 = false;
+                    break;
+
+                // 単価
+                case 4:
+                    if (flgcell3)
+                    {
+                        a = () => dataGridView2.CurrentCell = dataGridView2[3, dataGridView2.CurrentCellAddress.Y];
+                        BeginInvoke(a);
+                        flgcell3 = false;
+                    }
+                    break;
+                // 仕入金額
+                case 5:
+                    a = () => dataGridView2.CurrentCell = dataGridView2[6, dataGridView2.CurrentCellAddress.Y];
+                    BeginInvoke(a);
+                    break;
+                // 備考
+                case 6:
+                    if (flgcell1)
+                    {
+                        a = () => dataGridView2.CurrentCell = dataGridView2[4, dataGridView2.CurrentCellAddress.Y];
+                        BeginInvoke(a);
+                        flgcell1 = false;
+                    }
+                    if (flgcell4)
+                    {
+                        a = () => dataGridView2.CurrentCell = dataGridView2[4, dataGridView2.CurrentCellAddress.Y];
+                        BeginInvoke(a);
+                        flgcell4 = false;
+                    }
+                    break;
+            }
+        }
+
+        private void dataGridView2_EditingControlShowing_1(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            //表示されているコントロールがDataGridViewTextBoxEditingControlか調べる
+            if (e.Control is DataGridViewTextBoxEditingControl)
+            {
+                DataGridView dgv = (DataGridView)sender;
+
+                //編集のために表示されているコントロールを取得
+                DataGridViewTextBoxEditingControl tb =
+                    (DataGridViewTextBoxEditingControl)e.Control;
+
+                //イベントハンドラを削除
+                tb.KeyDown -= dataGridView2_KeyDown_1;
+                tb.PreviewKeyDown -= dataGridView2_PreviewKeyDown_1;
+                tb.KeyDown += dataGridView2_KeyDown_1;
+                tb.PreviewKeyDown += dataGridView2_PreviewKeyDown_1;
+            }
+        }
+
+        private void dataGridView2_KeyDown_1(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                switch (dataGridView2.CurrentCellAddress.X)
+                {
+                    case 3:
+                        if (flgtotal)
+                            dataGridView2[3, dataGridView2.CurrentCellAddress.Y].Value = total;
+                        break;
+                }
+                SendKeys.Send("{TAB}");
+                e.Handled = true;
+            }
+        }
+
+        private void dataGridView2_PreviewKeyDown_1(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Tab)
+            {
+                //dataGridView2.EndEdit();
+                if (dataGridView2.CurrentCellAddress.X == 1)
+                {
+                    dataGridView2.EndEdit();
+                    //サーバー接続
+                    string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
+                    MySqlConnection conn = new MySqlConnection(connstr);
+                    conn.Open();
+
+                    //SQL実行
+                    MySqlCommand cmd = new MySqlCommand("SELECT shohinmei, sku FROM shohin where shocd = '" + dataGridView2[1, dataGridView2.CurrentCellAddress.Y].Value.ToString() + "'", conn);
+                    MySqlDataReader reader = cmd.ExecuteReader();
+
+
+                    if (!reader.HasRows)
+                    {
+                        if (!flgcell2)
+                            MessageBox.Show("該当する商品がありません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        flgcell2 = true;
+                        dataGridView2.CurrentCell = dataGridView2[1, dataGridView2.CurrentCellAddress.Y];
+                        return;
+                    }
+
+
+                    //テーブル出力
+                    while (reader.Read())
+                    {
+                        row1 = reader["shohinmei"].ToString();
+                        row2 = reader["sku"].ToString();
+                        //Console.WriteLine(string.Join("\t", row));
+                    }
+
+                    dataGridView2[2, dataGridView2.CurrentCellAddress.Y].Value = row1;
+                    dataGridView2.EndEdit();
+
+
+                }
+                else if (dataGridView2.CurrentCellAddress.X == 3)
+                {
+                    //skuが"1"のとき、ダイアログを開く
+                    if (row2 == "True")
+                    {
+                        flgsizecolor[dataGridView2.CurrentCellAddress.Y] = true;
+
+                        Sizecolor sc = new Sizecolor();
+                        sc.ShowDialog();
+                        for (int i = 0; i < 11; i++)
+                        {
+                            for (int j = 0; j < 11; j++)
+                            {
+                                sizecolor[dataGridView2.CurrentCellAddress.Y, i, j] = sc.scdata[i, j];
+                            }
+                        }
+                        dataGridView2[3, dataGridView2.CurrentCellAddress.Y].Value = sc.total;
+                        total = sc.total;
+                        flgtotal = true;
+                        //dataGridView2.EndEdit();
+                        flgcell1 = true;
+                        sc.Dispose();
+                        row2 = "False";
+                        //dataGridView2.CurrentCell = dataGridView2[3, dataGridView2.CurrentCellAddress.Y];
+                    }
+                    else
+                    {
+                        flgtotal = false;
+                        flgsizecolor[dataGridView2.CurrentCellAddress.Y] = false;
+                        flgcell1 = true;
+                    }
+                    dataGridView2.CurrentCell = dataGridView2[4, dataGridView2.CurrentCellAddress.Y];
+
+                }
+                else if (dataGridView2.CurrentCellAddress.X == 4)
+                {
+
+                    //    dataGridView2[5, dataGridView2.CurrentCellAddress.Y].Value = int.Parse(dataGridView2[3, dataGridView2.CurrentCellAddress.Y].Value.ToString())
+                    //        * int.Parse(dataGridView2[4, dataGridView2.CurrentCellAddress.Y].Value.ToString());
+
+                    //dataGridView2.EndEdit();
+                }
+            }
+            else if (e.KeyCode == Keys.F1 || e.KeyCode == Keys.Up)
+            {
+                txtSiiresaki.Focus();
+                dataGridView2.CurrentCell = null;
             }
         }
     }
