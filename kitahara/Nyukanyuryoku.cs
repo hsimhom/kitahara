@@ -750,7 +750,7 @@ namespace kitahara
                     {
                         flgsizecolor[dataGridView2.CurrentCellAddress.Y] = true;
 
-                        Sizecolor sc = new Sizecolor();
+                        Sizecolor1 sc = new Sizecolor1();
                         sc.ShowDialog();
                         for (int i = 0; i < 11; i++)
                         {

@@ -11,15 +11,14 @@ using System.Windows.Forms;
 
 namespace kitahara
 {
-    public partial class Sizecolor1 : Form
+    public partial class Sizecolor2 : Form
     {
-        public int[,] scdata = new int[11,11];
+        public int[,] scdata = new int[11, 11];
         public int total = 0;
 
-        public Sizecolor1()
+        public Sizecolor2()
         {
             InitializeComponent();
-
             InitGrid();
         }
 
@@ -102,7 +101,7 @@ namespace kitahara
             return base.ProcessDialogKey(keyData);
         }
 
-        
+
         private void btnCancel_Click(object sender, EventArgs e)
         {
             //メッセージボックスを表示する
@@ -143,9 +142,9 @@ namespace kitahara
                 {
                     for (int j = 0; j < 11; j++)
                     {
-                        scdata[i, j] = int.Parse(dataGridView1[i+1, j].Value.ToString());
+                        scdata[i, j] = int.Parse(dataGridView1[i + 1, j].Value.ToString());
                     }
-                    total += int.Parse(dataGridView1[i+1, 11].Value.ToString());
+                    total += int.Parse(dataGridView1[i + 1, 11].Value.ToString());
                 }
 
                 this.Close();
@@ -179,9 +178,7 @@ namespace kitahara
             }
         }
 
-        
-
-        private void dataGridView1_CellEnter_1(object sender, DataGridViewCellEventArgs e)
+        private void dataGridView1_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
             switch (dataGridView1.CurrentCellAddress.X)
             {
@@ -192,7 +189,7 @@ namespace kitahara
             }
         }
 
-        private void dataGridView1_EditingControlShowing_1(object sender, DataGridViewEditingControlShowingEventArgs e)
+        private void dataGridView1_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
             //表示されているコントロールがDataGridViewTextBoxEditingControlか調べる
             if (e.Control is DataGridViewTextBoxEditingControl)
@@ -204,14 +201,14 @@ namespace kitahara
                     (DataGridViewTextBoxEditingControl)e.Control;
 
                 //イベントハンドラを削除
-                tb.KeyDown -= dataGridView1_KeyDown_1;
-                tb.PreviewKeyDown -= dataGridView1_PreviewKeyDown_1;
-                tb.KeyDown += dataGridView1_KeyDown_1;
-                tb.PreviewKeyDown += dataGridView1_PreviewKeyDown_1;
+                tb.KeyDown -= dataGridView1_KeyDown;
+                tb.PreviewKeyDown -= dataGridView1_PreviewKeyDown;
+                tb.KeyDown += dataGridView1_KeyDown;
+                tb.PreviewKeyDown += dataGridView1_PreviewKeyDown;
             }
         }
 
-        private void dataGridView1_PreviewKeyDown_1(object sender, PreviewKeyDownEventArgs e)
+        private void dataGridView1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Tab)
             {
@@ -228,7 +225,7 @@ namespace kitahara
             }
         }
 
-        private void dataGridView1_KeyDown_1(object sender, KeyEventArgs e)
+        private void dataGridView1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyData == Keys.Enter)
             {

@@ -60,8 +60,20 @@
     <Compile Include="Sizecolor.Designer.cs">
       <DependentUpon>Sizecolor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sizecolor2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sizecolor2.Designer.cs">
+      <DependentUpon>Sizecolor2.cs</DependentUpon>
+    </Compile>
     <Compile Include="System\Windows\Forms\DataGridViewEX.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Syukkasiji.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Syukkasiji.Designer.cs">
+      <DependentUpon>Syukkasiji.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Nyukanyuryoku.resx">
       <DependentUpon>Nyukanyuryoku.cs</DependentUpon>
@@ -77,6 +89,12 @@
     </Compile>
     <EmbeddedResource Include="Sizecolor.resx">
       <DependentUpon>Sizecolor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sizecolor2.resx">
+      <DependentUpon>Sizecolor2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Syukkasiji.resx">
+      <DependentUpon>Syukkasiji.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
