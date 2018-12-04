@@ -18,14 +18,21 @@ namespace kitahara
         // 在庫マスタにデータがない場合、true
         Boolean[] flgnodata = new Boolean[18];
 
+        // 色サイズの数量
         public int[,,] sizecolor = new int[18, 11, 11];
 
         string row1 = "";
         string colsku = "";
+
+        // 出荷指示数に表示する、色サイズの数量の合計
         int total = 0;
+
         // 入力区分
         int iKubun = 1;
+
         DateTime dt;
+
+        // 区分ごとのメッセージ表示切替
         string strkubun = "";
 
         Boolean flgtotal = false;
@@ -108,6 +115,14 @@ namespace kitahara
             dataGridView2.Columns[syukkasijisu].Width = 100;
             dataGridView2.Columns[biko].HeaderText = "摘要";
             dataGridView2.Columns[biko].Width = 200;
+
+            for (int i = hattyusu; i <= gzaiko; i++)
+            {
+                dataGridView2.Columns[i].DefaultCellStyle.Format = "#,0";
+                dataGridView2.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            }
+            dataGridView2.Columns[syukkasijisu].DefaultCellStyle.Format = "#,0";
+            dataGridView2.Columns[syukkasijisu].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
         #endregion
 
@@ -161,7 +176,6 @@ namespace kitahara
         private void check_textbox()
         {
             Control cControl = this.ActiveControl;
-            string row = "";
 
             //サーバー接続
             string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
@@ -231,9 +245,8 @@ namespace kitahara
                         //テーブル出力
                         while (reader.Read())
                         {
-                            row = reader["tanmei"].ToString();
+                            txtTantoumei.Text = reader["tanmei"].ToString();
                         }
-                        txtTantoumei.Text = row;
                         txtSyukosouko.Focus();
                     }
                     else
@@ -252,9 +265,8 @@ namespace kitahara
                         //テーブル出力
                         while (reader.Read())
                         {
-                            row = reader["sokomei"].ToString();
+                            txtSoukomei.Text = reader["sokomei"].ToString();
                         }
-                        txtSoukomei.Text = row;
                         txtSijibi.Focus();
                     }
                     else
@@ -284,7 +296,7 @@ namespace kitahara
                         //テーブル出力
                         while (reader.Read())
                         {
-                            row = reader["tokuisakimei"].ToString();
+                            txtTokuisakimei1.Text = reader["tokuisakimei"].ToString();
                             txtTokuisakimei2.Text = reader["tokuisakimei2"].ToString();
                             txtTokuisakimei3.Text = reader["tokuisakimei3"].ToString();
                             txtNefuda.Text = reader["nefuda"].ToString();
@@ -295,9 +307,7 @@ namespace kitahara
                             txtNohinsyo.Text = reader["senyou"].ToString();
                             txtBinil.Text = reader["biniru"].ToString();
                         }
-                        txtTokuisakimei1.Text = row;
                         txtTokuisakimei2.Focus();
-                        //dataGridView2.Focus();
                     }
                     else
                     {
@@ -453,11 +463,167 @@ namespace kitahara
         #region ログNoから表示を行う
         private void dispdata()
         {
+            int ihattyusu = 0;
+            int inyukasu = 0;
+            int ijittusu = 0;
+            int isyukasu = 0;
+            int itzaiko = 0;
+            int ikzaiko = 0;
+            int igzaiko = 0;
 
+            int col = dataGridView2.CurrentCellAddress.X;
+            int row = dataGridView2.CurrentCellAddress.Y;
+
+            //サーバー接続
+            string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
+            MySqlConnection conn = new MySqlConnection(connstr);
+            conn.Open();
+
+            //SQL実行
+            MySqlCommand　cmd = new MySqlCommand("SELECT * FROM syukalog where renban = @renban", conn);
+            cmd.Parameters.Add(new MySqlParameter("renban", txtLogno.Text));
+            MySqlDataReader　reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                //テーブル出力
+                while (reader.Read())
+                {
+                    txtTantoucode.Text = reader["tancd"].ToString();
+                    txtSyukosouko.Text = reader["syukosocd"].ToString();
+                    txtSijibi.Text = reader["sijibi"].ToString().Substring(0, 10);
+                    txtTokuisakicode.Text = reader["tokuisaki"].ToString();
+                    txtSyukabi.Text = reader["syuymd"].ToString().Substring(0,10);
+                    txtTyakabi.Text = reader["chaymd"].ToString().Substring(0, 10);
+                    txtDenpyobi.Text = reader["denymd"].ToString().Substring(0, 10);
+                    txtNefuda.Text = reader["nefudakbn"].ToString();
+                    txtSeel.Text = reader["sirkbn"].ToString();
+                    txtKakusi.Text = reader["hinkbn"].ToString();
+                    txtYokohari.Text = reader["senkbn"].ToString();
+                    txtKensin.Text = reader["kenkbn"].ToString();
+                    txtNohinsyo.Text = reader["sennokbn"].ToString();
+                    txtBinil.Text = reader["binikbn"].ToString();
+                    txtTyui.Text = reader["chuijiko"].ToString();
+                    txtBiko1.Text = reader["biko1"].ToString();
+                    txtBiko2.Text = reader["biko2"].ToString();
+                    txtBiko3.Text = reader["biko3"].ToString();
+                    txtBiko4.Text = reader["biko4"].ToString();
+                    dataGridView2[colhinban, 0].Value = reader["hinban"].ToString();
+                    dataGridView2[colsyohinmei, 0].Value = reader["shohinmei"].ToString();
+                    dataGridView2[kubun, 0].Value = reader["syukasu"].ToString();
+                    dataGridView2[ttantocd, 0].Value = reader["tanka"].ToString();
+                    dataGridView2[syukkasijisu, 0].Value = reader["urikin"].ToString();
+                }
+            }
+            else
+            {
+                MessageBox.Show("該当するログがありません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //txtTokuisakicode.Focus();
+                return;
+            }
+
+            cmd.Connection.Close();
+            cmd.Connection.Open();
+
+            //SQL実行
+            cmd = new MySqlCommand("SELECT shohinmei, sku, nyukasu, jyuchusu, syukasu FROM shohin where shocd = @shocd", conn);
+            cmd.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, 0].Value.ToString()));
+            reader = cmd.ExecuteReader();
+
+            if (!reader.HasRows)
+            {
+                MessageBox.Show("該当する商品がありません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                dataGridView2.CurrentCell = dataGridView2[colhinban, 0];
+                return;
+            }
+            else
+            {
+                //テーブル出力
+                while (reader.Read())
+                {
+                    row1 = reader["shohinmei"].ToString();
+                    colsku = reader["sku"].ToString();
+
+                    inyukasu = int.Parse(reader["nyukasu"].ToString());
+                    ijittusu = int.Parse(reader["jyuchusu"].ToString());
+                    isyukasu = int.Parse(reader["syukasu"].ToString());
+
+                }
+                dataGridView2[colsyohinmei, 0].Value = row1;
+            }
+
+            cmd.Connection.Close();
+            cmd.Connection.Open();
+
+            cmd = new MySqlCommand("SELECT hatsu,torioki,zaiko FROM zaiko where shocd = @shocd and souko = @souko", conn);
+            cmd.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, 0].Value.ToString()));
+            cmd.Parameters.Add(new MySqlParameter("souko", txtSyukosouko.Text));
+            MySqlDataReader reader2 = cmd.ExecuteReader();
+
+
+            if (reader2.HasRows)
+            {
+                while (reader2.Read())
+                {
+                    ihattyusu = int.Parse(reader2["hatsu"].ToString());
+                    itzaiko = int.Parse(reader2["torioki"].ToString());
+                    //gzaiko = int.Parse(reader2["zaiko"].ToString());
+                }
+                //flgnodata[row] = false;
+            }
+            else
+            {
+                // 在庫マスタにデータがない
+                ihattyusu = 0;
+                itzaiko = 0;
+                //flgnodata[row] = true;
+            }
+
+            ikzaiko = ihattyusu - ijittusu - isyukasu - itzaiko;
+            igzaiko = inyukasu = isyukasu;
+
+            dataGridView2[colsyohinmei, 0].Value = row1;
+            dataGridView2[hattyusu, 0].Value = ihattyusu;
+            dataGridView2[nyukasu, 0].Value = inyukasu;
+            dataGridView2[jittusu, 0].Value = ijittusu;
+            dataGridView2[syukasu, 0].Value = isyukasu;
+            dataGridView2[tzaiko, 0].Value = itzaiko;
+            dataGridView2[kzaiko, 0].Value = ikzaiko;
+            dataGridView2[gzaiko, 0].Value = igzaiko;
+
+            cmd.Connection.Close();
+            cmd.Connection.Open();
+
+            cmd = new MySqlCommand("SELECT sokomei FROM souko where soucd = '" + txtSyukosouko.Text + "'", conn);
+            reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                //テーブル出力
+                while (reader.Read())
+                {
+                    txtSoukomei.Text = reader["sokomei"].ToString();
+                }
+            }
+
+            cmd.Connection.Close();
+            cmd.Connection.Open();
+
+            cmd = new MySqlCommand("SELECT * FROM tokuisaki where tokuicd = '" + txtTokuisakicode.Text + "'", conn);
+            reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                //テーブル出力
+                while (reader.Read())
+                {
+                    txtTokuisakimei1.Text = reader["tokuisakimei"].ToString();
+                    txtTokuisakimei2.Text = reader["tokuisakimei2"].ToString();
+                    txtTokuisakimei3.Text = reader["tokuisakimei3"].ToString();
+                    
+                }
+            }
         }
         #endregion
 
-        #region DB追加、更新処理
+        #region DB追加処理
         private void Insertdata()
         {
             int i = 0;
@@ -540,129 +706,6 @@ namespace kitahara
                             l++;
                         }
                     }
-                    /*
-                    cmd.Parameters.Add(new MySqlParameter("sku10", sizecolor[i, 0, 0]));
-                    cmd.Parameters.Add(new MySqlParameter("sku11", sizecolor[i, 1, 0]));
-                    cmd.Parameters.Add(new MySqlParameter("sku12", sizecolor[i, 2, 0]));
-                    cmd.Parameters.Add(new MySqlParameter("sku13", sizecolor[i, 3, 0]));
-                    cmd.Parameters.Add(new MySqlParameter("sku14", sizecolor[i, 4, 0]));
-                    cmd.Parameters.Add(new MySqlParameter("sku15", sizecolor[i, 5, 0]));
-                    cmd.Parameters.Add(new MySqlParameter("sku16", sizecolor[i, 6, 0]));
-                    cmd.Parameters.Add(new MySqlParameter("sku17", sizecolor[i, 7, 0]));
-                    cmd.Parameters.Add(new MySqlParameter("sku18", sizecolor[i, 8, 0]));
-                    cmd.Parameters.Add(new MySqlParameter("sku19", sizecolor[i, 9, 0]));
-                    cmd.Parameters.Add(new MySqlParameter("sku20", sizecolor[i, 10, 0]));
-                    cmd.Parameters.Add(new MySqlParameter("sku21", sizecolor[i, 0, 1]));
-                    cmd.Parameters.Add(new MySqlParameter("sku22", sizecolor[i, 1, 1]));
-                    cmd.Parameters.Add(new MySqlParameter("sku23", sizecolor[i, 2, 1]));
-                    cmd.Parameters.Add(new MySqlParameter("sku24", sizecolor[i, 3, 1]));
-                    cmd.Parameters.Add(new MySqlParameter("sku25", sizecolor[i, 4, 1]));
-                    cmd.Parameters.Add(new MySqlParameter("sku26", sizecolor[i, 5, 1]));
-                    cmd.Parameters.Add(new MySqlParameter("sku27", sizecolor[i, 6, 1]));
-                    cmd.Parameters.Add(new MySqlParameter("sku28", sizecolor[i, 7, 1]));
-                    cmd.Parameters.Add(new MySqlParameter("sku29", sizecolor[i, 8, 1]));
-                    cmd.Parameters.Add(new MySqlParameter("sku30", sizecolor[i, 9, 1]));
-                    cmd.Parameters.Add(new MySqlParameter("sku31", sizecolor[i, 10, 1]));
-                    cmd.Parameters.Add(new MySqlParameter("sku32", sizecolor[i, 0, 2]));
-                    cmd.Parameters.Add(new MySqlParameter("sku33", sizecolor[i, 1, 2]));
-                    cmd.Parameters.Add(new MySqlParameter("sku34", sizecolor[i, 2, 2]));
-                    cmd.Parameters.Add(new MySqlParameter("sku35", sizecolor[i, 3, 2]));
-                    cmd.Parameters.Add(new MySqlParameter("sku36", sizecolor[i, 4, 2]));
-                    cmd.Parameters.Add(new MySqlParameter("sku37", sizecolor[i, 5, 2]));
-                    cmd.Parameters.Add(new MySqlParameter("sku38", sizecolor[i, 6, 2]));
-                    cmd.Parameters.Add(new MySqlParameter("sku39", sizecolor[i, 7, 2]));
-                    cmd.Parameters.Add(new MySqlParameter("sku40", sizecolor[i, 8, 2]));
-                    cmd.Parameters.Add(new MySqlParameter("sku41", sizecolor[i, 9, 2]));
-                    cmd.Parameters.Add(new MySqlParameter("sku42", sizecolor[i, 10, 2]));
-                    cmd.Parameters.Add(new MySqlParameter("sku43", sizecolor[i, 0, 3]));
-                    cmd.Parameters.Add(new MySqlParameter("sku44", sizecolor[i, 1, 3]));
-                    cmd.Parameters.Add(new MySqlParameter("sku45", sizecolor[i, 2, 3]));
-                    cmd.Parameters.Add(new MySqlParameter("sku46", sizecolor[i, 3, 3]));
-                    cmd.Parameters.Add(new MySqlParameter("sku47", sizecolor[i, 4, 3]));
-                    cmd.Parameters.Add(new MySqlParameter("sku48", sizecolor[i, 5, 3]));
-                    cmd.Parameters.Add(new MySqlParameter("sku49", sizecolor[i, 6, 3]));
-                    cmd.Parameters.Add(new MySqlParameter("sku50", sizecolor[i, 7, 3]));
-                    cmd.Parameters.Add(new MySqlParameter("sku51", sizecolor[i, 8, 3]));
-                    cmd.Parameters.Add(new MySqlParameter("sku52", sizecolor[i, 9, 3]));
-                    cmd.Parameters.Add(new MySqlParameter("sku53", sizecolor[i, 10, 3]));
-                    cmd.Parameters.Add(new MySqlParameter("sku54", sizecolor[i, 0, 4]));
-                    cmd.Parameters.Add(new MySqlParameter("sku55", sizecolor[i, 1, 4]));
-                    cmd.Parameters.Add(new MySqlParameter("sku56", sizecolor[i, 2, 4]));
-                    cmd.Parameters.Add(new MySqlParameter("sku57", sizecolor[i, 3, 4]));
-                    cmd.Parameters.Add(new MySqlParameter("sku58", sizecolor[i, 4, 4]));
-                    cmd.Parameters.Add(new MySqlParameter("sku59", sizecolor[i, 5, 4]));
-                    cmd.Parameters.Add(new MySqlParameter("sku60", sizecolor[i, 6, 4]));
-                    cmd.Parameters.Add(new MySqlParameter("sku61", sizecolor[i, 7, 4]));
-                    cmd.Parameters.Add(new MySqlParameter("sku62", sizecolor[i, 8, 4]));
-                    cmd.Parameters.Add(new MySqlParameter("sku63", sizecolor[i, 9, 4]));
-                    cmd.Parameters.Add(new MySqlParameter("sku64", sizecolor[i, 10, 4]));
-                    cmd.Parameters.Add(new MySqlParameter("sku65", sizecolor[i, 0, 5]));
-                    cmd.Parameters.Add(new MySqlParameter("sku66", sizecolor[i, 1, 5]));
-                    cmd.Parameters.Add(new MySqlParameter("sku67", sizecolor[i, 2, 5]));
-                    cmd.Parameters.Add(new MySqlParameter("sku68", sizecolor[i, 3, 5]));
-                    cmd.Parameters.Add(new MySqlParameter("sku69", sizecolor[i, 4, 5]));
-                    cmd.Parameters.Add(new MySqlParameter("sku70", sizecolor[i, 5, 5]));
-                    cmd.Parameters.Add(new MySqlParameter("sku71", sizecolor[i, 6, 5]));
-                    cmd.Parameters.Add(new MySqlParameter("sku72", sizecolor[i, 7, 5]));
-                    cmd.Parameters.Add(new MySqlParameter("sku73", sizecolor[i, 8, 5]));
-                    cmd.Parameters.Add(new MySqlParameter("sku74", sizecolor[i, 9, 5]));
-                    cmd.Parameters.Add(new MySqlParameter("sku75", sizecolor[i, 10, 5]));
-                    cmd.Parameters.Add(new MySqlParameter("sku76", sizecolor[i, 0, 6]));
-                    cmd.Parameters.Add(new MySqlParameter("sku77", sizecolor[i, 1, 6]));
-                    cmd.Parameters.Add(new MySqlParameter("sku78", sizecolor[i, 2, 6]));
-                    cmd.Parameters.Add(new MySqlParameter("sku79", sizecolor[i, 3, 6]));
-                    cmd.Parameters.Add(new MySqlParameter("sku80", sizecolor[i, 4, 6]));
-                    cmd.Parameters.Add(new MySqlParameter("sku81", sizecolor[i, 5, 6]));
-                    cmd.Parameters.Add(new MySqlParameter("sku82", sizecolor[i, 6, 6]));
-                    cmd.Parameters.Add(new MySqlParameter("sku83", sizecolor[i, 7, 6]));
-                    cmd.Parameters.Add(new MySqlParameter("sku84", sizecolor[i, 8, 6]));
-                    cmd.Parameters.Add(new MySqlParameter("sku85", sizecolor[i, 9, 6]));
-                    cmd.Parameters.Add(new MySqlParameter("sku86", sizecolor[i, 10, 6]));
-                    cmd.Parameters.Add(new MySqlParameter("sku87", sizecolor[i, 0, 7]));
-                    cmd.Parameters.Add(new MySqlParameter("sku88", sizecolor[i, 1, 7]));
-                    cmd.Parameters.Add(new MySqlParameter("sku89", sizecolor[i, 2, 7]));
-                    cmd.Parameters.Add(new MySqlParameter("sku90", sizecolor[i, 3, 7]));
-                    cmd.Parameters.Add(new MySqlParameter("sku91", sizecolor[i, 4, 7]));
-                    cmd.Parameters.Add(new MySqlParameter("sku92", sizecolor[i, 5, 7]));
-                    cmd.Parameters.Add(new MySqlParameter("sku93", sizecolor[i, 6, 7]));
-                    cmd.Parameters.Add(new MySqlParameter("sku94", sizecolor[i, 7, 7]));
-                    cmd.Parameters.Add(new MySqlParameter("sku95", sizecolor[i, 8, 7]));
-                    cmd.Parameters.Add(new MySqlParameter("sku96", sizecolor[i, 9, 7]));
-                    cmd.Parameters.Add(new MySqlParameter("sku97", sizecolor[i, 10, 7]));
-                    cmd.Parameters.Add(new MySqlParameter("sku98", sizecolor[i, 0, 8]));
-                    cmd.Parameters.Add(new MySqlParameter("sku99", sizecolor[i, 1, 8]));
-                    cmd.Parameters.Add(new MySqlParameter("sku100", sizecolor[i, 2, 8]));
-                    cmd.Parameters.Add(new MySqlParameter("sku101", sizecolor[i, 3, 8]));
-                    cmd.Parameters.Add(new MySqlParameter("sku102", sizecolor[i, 4, 8]));
-                    cmd.Parameters.Add(new MySqlParameter("sku103", sizecolor[i, 5, 8]));
-                    cmd.Parameters.Add(new MySqlParameter("sku104", sizecolor[i, 6, 8]));
-                    cmd.Parameters.Add(new MySqlParameter("sku105", sizecolor[i, 7, 8]));
-                    cmd.Parameters.Add(new MySqlParameter("sku106", sizecolor[i, 8, 8]));
-                    cmd.Parameters.Add(new MySqlParameter("sku107", sizecolor[i, 9, 8]));
-                    cmd.Parameters.Add(new MySqlParameter("sku108", sizecolor[i, 10, 8]));
-                    cmd.Parameters.Add(new MySqlParameter("sku109", sizecolor[i, 0, 9]));
-                    cmd.Parameters.Add(new MySqlParameter("sku110", sizecolor[i, 1, 9]));
-                    cmd.Parameters.Add(new MySqlParameter("sku111", sizecolor[i, 2, 9]));
-                    cmd.Parameters.Add(new MySqlParameter("sku112", sizecolor[i, 3, 9]));
-                    cmd.Parameters.Add(new MySqlParameter("sku113", sizecolor[i, 4, 9]));
-                    cmd.Parameters.Add(new MySqlParameter("sku114", sizecolor[i, 5, 9]));
-                    cmd.Parameters.Add(new MySqlParameter("sku115", sizecolor[i, 6, 9]));
-                    cmd.Parameters.Add(new MySqlParameter("sku116", sizecolor[i, 7, 9]));
-                    cmd.Parameters.Add(new MySqlParameter("sku117", sizecolor[i, 8, 9]));
-                    cmd.Parameters.Add(new MySqlParameter("sku118", sizecolor[i, 9, 9]));
-                    cmd.Parameters.Add(new MySqlParameter("sku119", sizecolor[i, 10, 9]));
-                    cmd.Parameters.Add(new MySqlParameter("sku120", sizecolor[i, 0, 10]));
-                    cmd.Parameters.Add(new MySqlParameter("sku121", sizecolor[i, 1, 10]));
-                    cmd.Parameters.Add(new MySqlParameter("sku122", sizecolor[i, 2, 10]));
-                    cmd.Parameters.Add(new MySqlParameter("sku123", sizecolor[i, 3, 10]));
-                    cmd.Parameters.Add(new MySqlParameter("sku124", sizecolor[i, 4, 10]));
-                    cmd.Parameters.Add(new MySqlParameter("sku125", sizecolor[i, 5, 10]));
-                    cmd.Parameters.Add(new MySqlParameter("sku126", sizecolor[i, 6, 10]));
-                    cmd.Parameters.Add(new MySqlParameter("sku127", sizecolor[i, 7, 10]));
-                    cmd.Parameters.Add(new MySqlParameter("sku128", sizecolor[i, 8, 10]));
-                    cmd.Parameters.Add(new MySqlParameter("sku129", sizecolor[i, 9, 10]));
-                    cmd.Parameters.Add(new MySqlParameter("sku130", sizecolor[i, 10, 10]));
-                    */
                     MySqlCommand cmd2 = new MySqlCommand("SELECT LAST_INSERT_ID()", conn);
                     try
                     {
@@ -718,13 +761,13 @@ namespace kitahara
                         int num3 = 0;
                         switch (dataGridView2[kubun, i].Value.ToString())
                         {
+                            case "0":
+                                num2 = num;
+                                break;
                             case "1":
                                 num1 = num;
                                 break;
                             case "2":
-                                num2 = num;
-                                break;
-                            case "3":
                                 num3 = num;
                                 break;
                         }
@@ -859,8 +902,83 @@ namespace kitahara
             MessageBox.Show(str);
         }
         #endregion
+        #region DB削除処理
+        private void deletedata()
+        {
+            // 出荷指示入力データから削除
+            string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
+            MySqlConnection conn = new MySqlConnection(connstr);
+            conn.Open();
+            MySqlCommand cmd = new MySqlCommand("delete from syukalog where renban = @renban", conn);
+            cmd.Parameters.Add(new MySqlParameter("renban", txtLogno.Text));
+            //MySqlDataReader reader = cmd.ExecuteReader();
+            try
+            {
+                // オープン
+                //cmd.Connection.Open();
+                // 実行
+                cmd.ExecuteNonQuery();
+                // 更新IDを取得
+                //var id = cmd2.ExecuteScalar();
+                // クローズ
+                //cmd.Connection.Close();
+            }
+            catch (SqlException ex)
+            {
+                // 例外処理
+                MessageBox.Show("例外発生:" + ex.Message);
+            }
 
-        
+            // 在庫マスタの逆更新
+            MySqlCommand cmd1 = new MySqlCommand("update zaiko set jyusyu = jyusyu - @jyusyu, zaisyu = zaisyu - @zaisyu, torisyu = torisyu - @torisyu, " +
+                        "syukasu = syukasu - @syukasu" +
+                        " where souko = @souko and shocd = @shocd", conn);
+            // パラメータ設定
+            cmd1.Parameters.Add(new MySqlParameter("souko", txtSyukosouko.Text));
+            cmd1.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, 0].Value));
+            int num = int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString());
+            int num1 = 0;
+            int num2 = 0;
+            int num3 = 0;
+            switch (dataGridView2[kubun, 0].Value.ToString())
+            {
+                case "1":
+                    num1 = num;
+                    break;
+                case "2":
+                    num2 = num;
+                    break;
+                case "3":
+                    num3 = num;
+                    break;
+            }
+            cmd1.Parameters.Add(new MySqlParameter("jyusyu", num1));
+            cmd1.Parameters.Add(new MySqlParameter("zaisyu", num2));
+            cmd1.Parameters.Add(new MySqlParameter("torisyu", num3));
+            cmd1.Parameters.Add(new MySqlParameter("syukasu", num));
+            
+            //MySqlCommand cmd2 = new MySqlCommand("SELECT LAST_INSERT_ID()", conn);
+            try
+            {
+                // オープン
+                //cmd1.Connection.Open();
+                // 実行
+                cmd1.ExecuteNonQuery();
+                // 更新IDを取得
+                //var id = cmd2.ExecuteScalar();
+                // クローズ
+                //cmd1.Connection.Close();
+            }
+            catch (SqlException ex)
+            {
+                // 例外処理
+                MessageBox.Show("例外発生:" + ex.Message);
+            }
+            string str = strkubun + "しました。";
+            MessageBox.Show(str);
+        }
+        #endregion
+
         private void Syukkasiji_Shown(object sender, EventArgs e)
         {
             dataGridView2.CurrentCell = null;
@@ -903,7 +1021,7 @@ namespace kitahara
                         //入力した値をキャンセルして元に戻すには、次のようにする
                         dgv.CancelEdit();
                         //キャンセルする
-                        e.Cancel = true;
+                        //e.Cancel = true;
                     }
                     //dataGridView2[hattyusu, dataGridView2.CurrentCellAddress.Y].Value = total;
                     break;
@@ -996,12 +1114,19 @@ namespace kitahara
 
         private void dataGridView2_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
+            // 発注数
             int ihattyusu = 0;
+            // 入荷数
             int inyukasu = 0;
+            // 受注数
             int ijittusu = 0;
+            // 出荷数
             int isyukasu = 0;
+            // 取置在庫
             int itzaiko = 0;
+            // 計算在庫
             int ikzaiko = 0;
+            // 現物在庫
             int igzaiko = 0;
 
             int col = dataGridView2.CurrentCellAddress.X;
@@ -1041,9 +1166,9 @@ namespace kitahara
                             row1 = reader["shohinmei"].ToString();
                             colsku = reader["sku"].ToString();
 
-                            inyukasu = int.Parse(reader["nyukasu"].ToString());
-                            ijittusu = int.Parse(reader["jyuchusu"].ToString());
-                            isyukasu = int.Parse(reader["syukasu"].ToString());
+                            //inyukasu = int.Parse(reader["nyukasu"].ToString());
+                            //ijittusu = int.Parse(reader["jyuchusu"].ToString());
+                            
 
                         }
                         dataGridView2[colsyohinmei, row].Value = row1;
@@ -1052,7 +1177,7 @@ namespace kitahara
                     cmd.Connection.Close();
                     cmd.Connection.Open();
 
-                    cmd = new MySqlCommand("SELECT hatsu,torioki FROM zaiko where shocd = @shocd and souko = @souko", conn);
+                    cmd = new MySqlCommand("SELECT * FROM zaiko where shocd = @shocd and souko = @souko", conn);
                     cmd.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, row].Value.ToString()));
                     cmd.Parameters.Add(new MySqlParameter("souko", txtSyukosouko.Text));
                     MySqlDataReader reader2 = cmd.ExecuteReader();
@@ -1064,6 +1189,10 @@ namespace kitahara
                         {
                             ihattyusu = int.Parse(reader2["hatsu"].ToString());
                             itzaiko = int.Parse(reader2["torioki"].ToString());
+                            inyukasu = int.Parse(reader2["nyukasu"].ToString());
+                            ijittusu = int.Parse(reader2["jyuchusu"].ToString());
+                            isyukasu = int.Parse(reader2["syukasu"].ToString());
+                            igzaiko = int.Parse(reader2["zaiko"].ToString());
                         }
                         flgnodata[row] = false;
                     }
@@ -1075,8 +1204,10 @@ namespace kitahara
                         flgnodata[row] = true;
                     }
 
-                    ikzaiko = ihattyusu - ijittusu - isyukasu - itzaiko;
-                    igzaiko = inyukasu = isyukasu;
+                    // 計算在庫=在庫マスタの現物在庫＋発注数ー入荷数ー受注数ー出荷数ー取置在庫
+                    // → 在庫マスタの現物在庫＋発注数ー入荷数ー受注数+出荷数ー取置在庫
+                    ikzaiko = igzaiko + ihattyusu - inyukasu - ijittusu + isyukasu - itzaiko;
+                    //igzaiko = inyukasu = isyukasu;
 
                     dataGridView2[colsyohinmei, row].Value = row1;
                     dataGridView2[hattyusu, row].Value = ihattyusu;
@@ -1220,8 +1351,17 @@ namespace kitahara
             if (result == DialogResult.Yes)
             {
                 //「はい」が選択された時
-                Insertdata();
-                InitGrid();
+                switch (iKubun) {
+                    case 1:
+                        Insertdata();
+                        InitGrid();
+                        break;
+                    case 2:
+                    case 3:
+                        deletedata();
+                        InitGrid();
+                        break;
+            }
                 //txtTokuisakicode.Text = "";
                 //txtTokuisakimei1.Text = "";
             }
