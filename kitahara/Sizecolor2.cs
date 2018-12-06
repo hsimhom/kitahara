@@ -19,7 +19,7 @@ namespace kitahara
         public Sizecolor2()
         {
             InitializeComponent();
-            InitGrid();
+            
         }
 
         private void InitGrid()
@@ -65,6 +65,18 @@ namespace kitahara
             dataGridView1.Columns[10].Width = 80;
             dataGridView1.Columns[11].HeaderText = "　";
             dataGridView1.Columns[11].Width = 80;
+        }
+
+        private void Insertdata()
+        {
+            for (int i = 0; i < 11; i++)
+            {
+                for (int j = 0; j < 11; j++)
+                {
+                    dataGridView1[i + 1, j].Value = scdata[i, j];
+                }
+            }
+
         }
 
         //DataGridView以外のコントロールのキー押下検知
@@ -126,56 +138,12 @@ namespace kitahara
 
         private void btnTouroku_Click(object sender, EventArgs e)
         {
-            dataGridView1.EndEdit();
-            //メッセージボックスを表示する
-            DialogResult result = MessageBox.Show("登録しますか？",
-                "質問",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Exclamation,
-                MessageBoxDefaultButton.Button2);
-
-            //何が選択されたか調べる
-            if (result == DialogResult.Yes)
-            {
-                //「はい」が選択された時
-                for (int i = 0; i < 11; i++)
-                {
-                    for (int j = 0; j < 11; j++)
-                    {
-                        scdata[i, j] = int.Parse(dataGridView1[i + 1, j].Value.ToString());
-                    }
-                    total += int.Parse(dataGridView1[i + 1, 11].Value.ToString());
-                }
-
-                this.Close();
-            }
-            else if (result == DialogResult.No)
-            {
-                //「いいえ」が選択された時
-                return;
-            }
+            
         }
 
         private void btnEnd_Click(object sender, EventArgs e)
         {
-            //メッセージボックスを表示する
-            DialogResult result = MessageBox.Show("終了しますか？",
-                "質問",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Exclamation,
-                MessageBoxDefaultButton.Button2);
-
-            //何が選択されたか調べる
-            if (result == DialogResult.Yes)
-            {
-                //「はい」が選択された時
-                this.Close();
-            }
-            else if (result == DialogResult.No)
-            {
-                //「いいえ」が選択された時
-                return;
-            }
+           
         }
 
         private void dataGridView1_CellEnter(object sender, DataGridViewCellEventArgs e)
@@ -231,6 +199,66 @@ namespace kitahara
             {
                 SendKeys.Send("{TAB}");
                 e.Handled = true;
+            }
+        }
+
+        private void Sizecolor2_Load(object sender, EventArgs e)
+        {
+            InitGrid();
+            Insertdata();
+        }
+
+        private void btnCancel_Click_1(object sender, EventArgs e)
+        {
+            //メッセージボックスを表示する
+            DialogResult result = MessageBox.Show("終了しますか？",
+                "質問",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Exclamation,
+                MessageBoxDefaultButton.Button2);
+
+            //何が選択されたか調べる
+            if (result == DialogResult.Yes)
+            {
+                //「はい」が選択された時
+                this.Close();
+            }
+            else if (result == DialogResult.No)
+            {
+                //「いいえ」が選択された時
+                return;
+            }
+        }
+
+        private void btnTouroku_Click_1(object sender, EventArgs e)
+        {
+            dataGridView1.EndEdit();
+            //メッセージボックスを表示する
+            DialogResult result = MessageBox.Show("登録しますか？",
+                "質問",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Exclamation,
+                MessageBoxDefaultButton.Button2);
+
+            //何が選択されたか調べる
+            if (result == DialogResult.Yes)
+            {
+                //「はい」が選択された時
+                for (int i = 0; i < 11; i++)
+                {
+                    for (int j = 0; j < 11; j++)
+                    {
+                        scdata[i, j] = int.Parse(dataGridView1[i + 1, j].Value.ToString());
+                    }
+                    total += int.Parse(dataGridView1[i + 1, 11].Value.ToString());
+                }
+
+                this.Close();
+            }
+            else if (result == DialogResult.No)
+            {
+                //「いいえ」が選択された時
+                return;
             }
         }
     }
