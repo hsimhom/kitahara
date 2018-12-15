@@ -20,15 +20,22 @@ namespace kitahara
 
         // 色サイズの数量
         public int[,,] sizecolor = new int[18, 11, 11];
+        Boolean[] flgsizecolor = new Boolean[18];
 
+        // 色サイズの変更前の数量
+        int[,] sizecolor_bk = new int[11, 11];
+        int suryou_bk = 0;
+        
         string row1 = "";
-        string colsku = "";
+        string flgsku = "";
 
         // 出荷指示数に表示する、色サイズの数量の合計
         int total = 0;
 
         // 入力区分
         int iKubun = 1;
+
+        int iDpKubun = 1;
 
         DateTime dt;
 
@@ -554,7 +561,7 @@ namespace kitahara
                 while (reader.Read())
                 {
                     row1 = reader["shohinmei"].ToString();
-                    colsku = reader["sku"].ToString();
+                    flgsku = reader["sku"].ToString();
 
                     inyukasu = int.Parse(reader["nyukasu"].ToString());
                     ijittusu = int.Parse(reader["jyuchusu"].ToString());
@@ -588,6 +595,7 @@ namespace kitahara
                             
                             string str = "sku" + l.ToString();
                             sizecolor[0, i, j] = int.Parse(reader2[str].ToString());
+                            sizecolor_bk[i,j] = int.Parse(reader2[str].ToString());
                             l++;
                         }
                     }
@@ -657,6 +665,39 @@ namespace kitahara
         #region DB追加処理
         private void Insertdata()
         {
+            log_insert();
+            zaiko_insert(0);
+            string str = strkubun + "しました。";
+            MessageBox.Show(str);
+        }
+        #endregion
+
+        #region DB更新処理
+        private void updatedata()
+        {
+            log_delete();
+            log_insert();
+            zaiko_update_minas();
+            zaiko_update_plus();
+            zaiko_update_new();
+            string str = strkubun + "しました。";
+            MessageBox.Show(str);
+        }
+        #endregion
+
+        #region DB削除処理
+        private void deletedata()
+        {
+            log_delete();
+            zaiko_delete();
+            string str = strkubun + "しました。";
+            MessageBox.Show(str);
+        }
+        #endregion
+
+        #region log追加処理 log_insert()
+        private void log_insert()
+        {
             int i = 0;
             //サーバー接続
             string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
@@ -696,7 +737,7 @@ namespace kitahara
                         "@sku101, @sku102, @sku103, @sku104, @sku105, @sku106, @sku107, @sku108, @sku109, @sku110," +
                         "@sku111, @sku112, @sku113, @sku114, @sku115, @sku116, @sku117, @sku118, @sku119, @sku120," +
                         "@sku121, @sku122, @sku123, @sku124, @sku125, @sku126, @sku127, @sku128, @sku129, @sku130 )", conn);
-                    cmd.Parameters.Add(new MySqlParameter("gyono", i+1));
+                    cmd.Parameters.Add(new MySqlParameter("gyono", i + 1));
                     cmd.Parameters.Add(new MySqlParameter("nkbn", iKubun));
                     cmd.Parameters.Add(new MySqlParameter("tancd", txtTantoucode.Text));
                     cmd.Parameters.Add(new MySqlParameter("syukosocd", txtSyukosouko.Text));
@@ -754,11 +795,61 @@ namespace kitahara
                         // 例外処理
                         MessageBox.Show("例外発生:" + ex.Message);
                     }
+
+                    // 在庫マスタinsert or update
                     
+                }
+                i++;
+            }
+        
+        }
+        #endregion
+
+        #region log削除処理 log_delete()
+        private void log_delete()
+        {
+            // 出荷指示入力データから削除
+            string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
+            MySqlConnection conn = new MySqlConnection(connstr);
+            conn.Open();
+            MySqlCommand cmd = new MySqlCommand("delete from syukalog where renban = @renban", conn);
+            cmd.Parameters.Add(new MySqlParameter("renban", txtLogno.Text));
+            //MySqlDataReader reader = cmd.ExecuteReader();
+            try
+            {
+                // オープン
+                //cmd.Connection.Open();
+                // 実行
+                cmd.ExecuteNonQuery();
+                // 更新IDを取得
+                //var id = cmd2.ExecuteScalar();
+                // クローズ
+                //cmd.Connection.Close();
+            }
+            catch (SqlException ex)
+            {
+                // 例外処理
+                MessageBox.Show("例外発生:" + ex.Message);
+            }
+        }
+        #endregion
+
+        #region 在庫マスタ追加処理 zaiko_insert(int start)
+        private void zaiko_insert(int start)
+        {
+            int i = start;
+            //サーバー接続
+            string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
+            MySqlConnection conn = new MySqlConnection(connstr);
+
+            while (i < 18)
+            {
+                if (dataGridView2[colhinban, i].Value.ToString() != "")
+                {
                     // 在庫マスタinsert or update
                     if (flgnodata[i])
                     {
-                        cmd = new MySqlCommand("insert into zaiko ( souko, shocd, jyusyu, zaisyu, torisyu, syukasu, zaiko, syukabi," +
+                        MySqlCommand cmd = new MySqlCommand("insert into zaiko ( souko, shocd, jyusyu, zaisyu, torisyu, syukasu, zaiko, syukabi," +
                         "sku10, sku11, sku12, sku13, sku14, sku15, sku16, sku17, sku18, sku19, sku20," +
                         "sku21, sku22, sku23, sku24, sku25, sku26, sku27, sku28, sku29, sku30," +
                         "sku31, sku32, sku33, sku34, sku35, sku36, sku37, sku38, sku39, sku40," +
@@ -809,9 +900,9 @@ namespace kitahara
                         cmd.Parameters.Add(new MySqlParameter("zaiko", num));
                         DateTime.TryParse(txtSijibi.Text, out dt);
                         cmd.Parameters.Add(new MySqlParameter("syukabi", dt));
-                        
-                        strsku = "";
-                        l = 10;
+
+                        string strsku = "";
+                        int l = 10;
                         for (int j = 0; j < 11; j++)
                         {
                             for (int k = 0; k < 11; k++)
@@ -896,8 +987,8 @@ namespace kitahara
                         DateTime.TryParse(txtSijibi.Text, out dt);
                         cmd1.Parameters.Add(new MySqlParameter("syukabi", dt));
 
-                        strsku = "";
-                        l = 10;
+                        string strsku = "";
+                        int l = 10;
                         for (int j = 0; j < 11; j++)
                         {
                             for (int k = 0; k < 11; k++)
@@ -928,101 +1019,78 @@ namespace kitahara
                     }
                 }
                 i++;
+            
+            
             }
-            string str = strkubun + "しました。";
-            MessageBox.Show(str);
         }
         #endregion
 
-        #region DB更新処理
-        private void updatedata()
+        #region 在庫マスタ更新処理（マイナス更新）zaiko_update_minas()
+        private void zaiko_update_minas()
         {
-            // 出荷指示入力データから削除
+            //サーバー接続
             string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
             MySqlConnection conn = new MySqlConnection(connstr);
-            conn.Open();
-            MySqlCommand cmd = new MySqlCommand("delete from syukalog where renban = @renban", conn);
-            cmd.Parameters.Add(new MySqlParameter("renban", txtLogno.Text));
-            //MySqlDataReader reader = cmd.ExecuteReader();
-            try
-            {
-                // オープン
-                //cmd.Connection.Open();
-                // 実行
-                cmd.ExecuteNonQuery();
-                // 更新IDを取得
-                //var id = cmd2.ExecuteScalar();
-                // クローズ
-                cmd.Connection.Close();
-            }
-            catch (SqlException ex)
-            {
-                // 例外処理
-                MessageBox.Show("例外発生:" + ex.Message);
-            }
 
-            // 出荷指示入力データに追加
-            cmd = new MySqlCommand("insert into syukalog (renban, gyono, nkbn, tancd, syukosocd, sijibi, tokuisaki, syuymd, chaymd," +
-                        "denymd, nefudakbn,sirkbn,hinkbn,senkbn,kenkbn,sennokbn,binikbn,chuijiko,hinban,shohinmei,syukasu,tanka,urikin," +
-                        "biko1,biko2,biko3,biko4," +
-                        "sku10, sku11, sku12, sku13, sku14, sku15, sku16, sku17, sku18, sku19, sku20," +
-                        "sku21, sku22, sku23, sku24, sku25, sku26, sku27, sku28, sku29, sku30," +
-                        "sku31, sku32, sku33, sku34, sku35, sku36, sku37, sku38, sku39, sku40," +
-                        "sku41, sku42, sku43, sku44, sku45, sku46, sku47, sku48, sku49, sku50," +
-                        "sku51, sku52, sku53, sku54, sku55, sku56, sku57, sku58, sku59, sku60," +
-                        "sku61, sku62, sku63, sku64, sku65, sku66, sku67, sku68, sku69, sku70," +
-                        "sku71, sku72, sku73, sku74, sku75, sku76, sku77, sku78, sku79, sku80," +
-                        "sku81, sku82, sku83, sku84, sku85, sku86, sku87, sku88, sku89, sku90," +
-                        "sku91, sku92, sku93, sku94, sku95, sku96, sku97, sku98, sku99, sku100," +
-                        "sku101, sku102, sku103, sku104, sku105, sku106, sku107, sku108, sku109, sku110," +
-                        "sku111, sku112, sku113, sku114, sku115, sku116, sku117, sku118, sku119, sku120," +
-                        "sku121, sku122, sku123, sku124, sku125, sku126, sku127, sku128, sku129, sku130) values " +
-                        "(@renban, @gyono, @nkbn, @tancd, @syukosocd, @sijibi, @tokuisaki, @syuymd, @chaymd," +
-                        "@denymd, @nefudakbn, @sirkbn,@hinkbn,@senkbn,@kenkbn,@sennokbn,@binikbn,@chuijiko,@hinban,@shohinmei,@syukasu,@tanka,@urikin," +
-                        "@biko1,@biko2,@biko3,@biko4," +
-                        "@sku10, @sku11, @sku12, @sku13, @sku14, @sku15, @sku16, @sku17, @sku18, @sku19, @sku20," +
-                        "@sku21, @sku22, @sku23, @sku24, @sku25, @sku26, @sku27, @sku28, @sku29, @sku30," +
-                        "@sku31, @sku32, @sku33, @sku34, @sku35, @sku36, @sku37, @sku38, @sku39, @sku40," +
-                        "@sku41, @sku42, @sku43, @sku44, @sku45, @sku46, @sku47, @sku48, @sku49, @sku50," +
-                        "@sku51, @sku52, @sku53, @sku54, @sku55, @sku56, @sku57, @sku58, @sku59, @sku60," +
-                        "@sku61, @sku62, @sku63, @sku64, @sku65, @sku66, @sku67, @sku68, @sku69, @sku70," +
-                        "@sku71, @sku72, @sku73, @sku74, @sku75, @sku76, @sku77, @sku78, @sku79, @sku80," +
-                        "@sku81, @sku82, @sku83, @sku84, @sku85, @sku86, @sku87, @sku88, @sku89, @sku90," +
-                        "@sku91, @sku92, @sku93, @sku94, @sku95, @sku96, @sku97, @sku98, @sku99, @sku100," +
-                        "@sku101, @sku102, @sku103, @sku104, @sku105, @sku106, @sku107, @sku108, @sku109, @sku110," +
-                        "@sku111, @sku112, @sku113, @sku114, @sku115, @sku116, @sku117, @sku118, @sku119, @sku120," +
-                        "@sku121, @sku122, @sku123, @sku124, @sku125, @sku126, @sku127, @sku128, @sku129, @sku130 )", conn);
-            cmd.Parameters.Add(new MySqlParameter("renban", txtLogno.Text));
-            cmd.Parameters.Add(new MySqlParameter("gyono", 1));
-            cmd.Parameters.Add(new MySqlParameter("nkbn", iKubun));
-            cmd.Parameters.Add(new MySqlParameter("tancd", txtTantoucode.Text));
-            cmd.Parameters.Add(new MySqlParameter("syukosocd", txtSyukosouko.Text));
+            int num1 = 0;
+            int num2 = 0;
+            int num3 = 0;
+            switch (iDpKubun)
+            {
+                case 0:
+                    num1 = suryou_bk;
+                    num2 = 0;
+                    num3 = 0;
+                    break;
+                case 1:
+                    num1 = 0;
+                    num2 = suryou_bk;
+                    num3 = 0;
+                    break;
+                case 2:
+                    num1 = 0;
+                    num2 = 0;
+                    num3 = suryou_bk;
+                    break;
+                }
+            MySqlCommand cmd3 = new MySqlCommand("update zaiko set jyusyu = jyusyu - @jyusyu, zaisyu = zaisyu - @zaisyu, torisyu = torisyu - @torisyu,  " +
+                "syukasu = syukasu - @syukasu, zaiko = zaiko + @zaiko, syukabi = @syukabi," +
+                "sku10 = sku10 + @sku10,sku11 = sku11 + @sku11,sku12 = sku12 + @sku12,sku13 = sku13 + @sku13,sku14 = sku14 + @sku14,sku15 = sku15 + @sku15," +
+                "sku16 = sku16 + @sku16,sku17 = sku17 + @sku17,sku18 = sku18 + @sku18,sku19 = sku19 + @sku19,sku20 = sku20 + @sku20," +
+                "sku21 = sku21 + @sku21, sku22 = sku22 + @sku22, sku23 = sku23 + @sku23, sku24 = sku24 + @sku24, sku25 = sku25 + @sku25," +
+                "sku26 = sku26 + @sku26, sku27 = sku27 + @sku27, sku28 = sku28 + @sku28, sku29 = sku29 + @sku29, sku30 = sku30 + @sku30," +
+                "sku31 = sku31 + @sku31, sku32 = sku32 + @sku32, sku33 = sku33 + @sku33, sku34 = sku34 + @sku34, sku35 = sku35 + @sku35," +
+                "sku36 = sku36 + @sku36, sku37 = sku37 + @sku37, sku38 = sku38 + @sku38, sku39 = sku39 + @sku39, sku40 = sku40 + @sku40," +
+                "sku41 = sku41 + @sku41, sku42 = sku42 + @sku42, sku43 = sku43 + @sku43, sku44 = sku44 + @sku44, sku45 = sku45 + @sku45," +
+                "sku46 = sku46 + @sku46, sku47 = sku47 + @sku47, sku48 = sku48 + @sku48, sku49 = sku49 + @sku49, sku50 = sku50 + @sku50," +
+                "sku51 = sku51 + @sku51, sku52 = sku52 + @sku52, sku53 = sku53 + @sku53, sku54 = sku54 + @sku54, sku55 = sku55 + @sku55," +
+                "sku56 = sku56 + @sku56, sku57 = sku57 + @sku57, sku58 = sku58 + @sku58, sku59 = sku59 + @sku59, sku60 = sku60 + @sku60," +
+                "sku61 = sku61 + @sku61, sku62 = sku62 + @sku62, sku63 = sku63 + @sku63, sku64 = sku64 + @sku64, sku65 = sku65 + @sku65," +
+                "sku66 = sku66 + @sku66, sku67 = sku67 + @sku67, sku68 = sku68 + @sku68, sku69 = sku69 + @sku69, sku70 = sku70 + @sku70," +
+                "sku71 = sku71 + @sku71, sku72 = sku72 + @sku72, sku73 = sku73 + @sku73, sku74 = sku74 + @sku74, sku75 = sku75 + @sku75," +
+                "sku76 = sku76 + @sku76, sku77 = sku77 + @sku77, sku78 = sku78 + @sku78, sku79 = sku79 + @sku79, sku80 = sku80 + @sku80," +
+                "sku81 = sku81 + @sku81, sku82 = sku82 + @sku82, sku83 = sku83 + @sku83, sku84 = sku84 + @sku84, sku85 = sku85 + @sku85," +
+                "sku86 = sku86 + @sku86, sku87 = sku87 + @sku87, sku88 = sku88 + @sku88, sku89 = sku89 + @sku89, sku30 = sku30 + @sku30," +
+                "sku91 = sku91 + @sku91, sku92 = sku92 + @sku92, sku93 = sku93 + @sku93, sku94 = sku94 + @sku94, sku95 = sku95 + @sku95," +
+                "sku96 = sku96 + @sku96, sku97 = sku97 + @sku97, sku98 = sku98 + @sku98, sku99 = sku99 + @sku99, sku100 = sku100 + @sku100," +
+                "sku101 = sku101 + @sku101, sku102 = sku102 + @sku102, sku103 = sku103 + @sku103, sku104 = sku104 + @sku104, sku105 = sku105 + @sku105," +
+                "sku106 = sku106 + @sku106, sku107 = sku107 + @sku107, sku108 = sku108 + @sku108, sku109 = sku109 + @sku109, sku110 = sku110 + @sku110," +
+                "sku111 = sku111 + @sku111, sku112 = sku112 + @sku112, sku113 = sku113 + @sku113, sku114 = sku114 + @sku114, sku115 = sku115 + @sku115," +
+                "sku116 = sku116 + @sku116, sku117 = sku117 + @sku117, sku118 = sku118 + @sku118, sku119 = sku119 + @sku119, sku120 = sku120 + @sku120," +
+                "sku121 = sku121 + @sku121, sku122 = sku122 + @sku122, sku123 = sku123 + @sku123, sku124 = sku124 + @sku124, sku125 = sku125 + @sku125," +
+                "sku126 = sku126 + @sku126, sku127 = sku127 + @sku127, sku128 = sku128 + @sku128, sku129 = sku129 + @sku129, sku130 = sku130 + @sku130" +
+                " where souko = @souko and shocd = @shocd", conn);
+            // パラメータ設定
+            cmd3.Parameters.Add(new MySqlParameter("souko", txtSyukosouko.Text));
+            cmd3.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, 0].Value));
+            cmd3.Parameters.Add(new MySqlParameter("jyusyu", num2));
+            cmd3.Parameters.Add(new MySqlParameter("zaisyu", num1));
+            cmd3.Parameters.Add(new MySqlParameter("torisyu", num3));
+            cmd3.Parameters.Add(new MySqlParameter("syukasu", suryou_bk));
+            cmd3.Parameters.Add(new MySqlParameter("zaiko", suryou_bk));
             DateTime.TryParse(txtSijibi.Text, out dt);
-            cmd.Parameters.Add(new MySqlParameter("sijibi", dt));
-            cmd.Parameters.Add(new MySqlParameter("tokuisaki", txtTokuisakicode.Text));
-            DateTime.TryParse(txtSyukabi.Text, out dt);
-            cmd.Parameters.Add(new MySqlParameter("syuymd", dt));
-            DateTime.TryParse(txtTyakabi.Text, out dt);
-            cmd.Parameters.Add(new MySqlParameter("chaymd", dt));
-            DateTime.TryParse(txtDenpyobi.Text, out dt);
-            cmd.Parameters.Add(new MySqlParameter("denymd", dt));
-            cmd.Parameters.Add(new MySqlParameter("nefudakbn", txtNefuda.Text));
-            cmd.Parameters.Add(new MySqlParameter("sirkbn", txtSeel.Text));
-            cmd.Parameters.Add(new MySqlParameter("hinkbn", txtKakusi.Text));
-            cmd.Parameters.Add(new MySqlParameter("senkbn", txtYokohari.Text));
-            cmd.Parameters.Add(new MySqlParameter("kenkbn", txtKensin.Text));
-            cmd.Parameters.Add(new MySqlParameter("sennokbn", txtNohinsyo.Text));
-            cmd.Parameters.Add(new MySqlParameter("binikbn", txtBinil.Text));
-            cmd.Parameters.Add(new MySqlParameter("chuijiko", txtTyui.Text));
-            cmd.Parameters.Add(new MySqlParameter("hinban", dataGridView2[colhinban, 0].Value));
-            cmd.Parameters.Add(new MySqlParameter("shohinmei", dataGridView2[colsyohinmei, 0].Value));
-            cmd.Parameters.Add(new MySqlParameter("syukasu", dataGridView2[kubun, 0].Value));
-            cmd.Parameters.Add(new MySqlParameter("tanka", dataGridView2[ttantocd, 0].Value));
-            cmd.Parameters.Add(new MySqlParameter("urikin", dataGridView2[syukkasijisu, 0].Value));
-            cmd.Parameters.Add(new MySqlParameter("biko1", txtBiko1.Text));
-            cmd.Parameters.Add(new MySqlParameter("biko2", txtBiko2.Text));
-            cmd.Parameters.Add(new MySqlParameter("biko3", txtBiko3.Text));
-            cmd.Parameters.Add(new MySqlParameter("biko4", txtBiko4.Text));
+            cmd3.Parameters.Add(new MySqlParameter("syukabi", dt));
+
             string strsku = "";
             int l = 10;
             for (int j = 0; j < 11; j++)
@@ -1030,138 +1098,241 @@ namespace kitahara
                 for (int k = 0; k < 11; k++)
                 {
                     strsku = "sku" + l.ToString();
-                    cmd.Parameters.Add(new MySqlParameter(strsku, sizecolor[0, k, j]));
+                    cmd3.Parameters.Add(new MySqlParameter(strsku, sizecolor_bk[k, j]));
                     l++;
                 }
             }
+
             //MySqlCommand cmd2 = new MySqlCommand("SELECT LAST_INSERT_ID()", conn);
             try
             {
                 // オープン
-                cmd.Connection.Open();
+                cmd3.Connection.Open();
                 // 実行
-                cmd.ExecuteNonQuery();
+                cmd3.ExecuteNonQuery();
                 // 更新IDを取得
                 //var id = cmd2.ExecuteScalar();
                 // クローズ
-                cmd.Connection.Close();
+                cmd3.Connection.Close();
             }
             catch (SqlException ex)
             {
                 // 例外処理
                 MessageBox.Show("例外発生:" + ex.Message);
             }
-
-            // 在庫マスタの更新→在庫マスタの削除＋在庫マスタの登録
-            // 在庫マスタの削除
-            connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
-            conn = new MySqlConnection(connstr);
-            conn.Open();
-            cmd = new MySqlCommand("delete from zaiko where renban = @renban", conn);
-            cmd.Parameters.Add(new MySqlParameter("renban", txtLogno.Text));
-            //MySqlDataReader reader = cmd.ExecuteReader();
-            try
-            {
-                // オープン
-                //cmd.Connection.Open();
-                // 実行
-                cmd.ExecuteNonQuery();
-                // 更新IDを取得
-                //var id = cmd2.ExecuteScalar();
-                // クローズ
-                cmd.Connection.Close();
-            }
-            catch (SqlException ex)
-            {
-                // 例外処理
-                MessageBox.Show("例外発生:" + ex.Message);
-            }
-            // 在庫マスタの登録
-
-            string str = strkubun + "しました。";
-            MessageBox.Show(str);
         }
         #endregion
 
-        #region DB削除処理
-        private void deletedata()
-        {
-            // 出荷指示入力データから削除
+        #region 在庫マスタ更新処理（プラス更新）zaiko_update_plus()
+        private void zaiko_update_plus()
+        {//サーバー接続
             string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
             MySqlConnection conn = new MySqlConnection(connstr);
-            conn.Open();
-            MySqlCommand cmd = new MySqlCommand("delete from syukalog where renban = @renban", conn);
-            cmd.Parameters.Add(new MySqlParameter("renban", txtLogno.Text));
-            //MySqlDataReader reader = cmd.ExecuteReader();
-            try
-            {
-                // オープン
-                //cmd.Connection.Open();
-                // 実行
-                cmd.ExecuteNonQuery();
-                // 更新IDを取得
-                //var id = cmd2.ExecuteScalar();
-                // クローズ
-                //cmd.Connection.Close();
-            }
-            catch (SqlException ex)
-            {
-                // 例外処理
-                MessageBox.Show("例外発生:" + ex.Message);
-            }
 
-            // 在庫マスタの逆更新
-            MySqlCommand cmd1 = new MySqlCommand("update zaiko set jyusyu = jyusyu - @jyusyu, zaisyu = zaisyu - @zaisyu, torisyu = torisyu - @torisyu, " +
-                        "syukasu = syukasu - @syukasu" +
-                        " where souko = @souko and shocd = @shocd", conn);
-            // パラメータ設定
-            cmd1.Parameters.Add(new MySqlParameter("souko", txtSyukosouko.Text));
-            cmd1.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, 0].Value));
-            int num = int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString());
             int num1 = 0;
             int num2 = 0;
             int num3 = 0;
-            switch (dataGridView2[kubun, 0].Value.ToString())
+            switch (iDpKubun)
             {
-                case "1":
-                    num1 = num;
+                case 1:
+                    num1 = int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString());
+                    num2 = 0;
+                    num3 = 0;
                     break;
-                case "2":
-                    num2 = num;
+                case 2:
+                    num1 = 0;
+                    num2 = int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString());
+                    num3 = 0;
                     break;
-                case "3":
-                    num3 = num;
+                case 3:
+                    num1 = 0;
+                    num2 = 0;
+                    num3 = int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString());
                     break;
+                
             }
-            cmd1.Parameters.Add(new MySqlParameter("jyusyu", num1));
-            cmd1.Parameters.Add(new MySqlParameter("zaisyu", num2));
-            cmd1.Parameters.Add(new MySqlParameter("torisyu", num3));
-            cmd1.Parameters.Add(new MySqlParameter("syukasu", num));
-            
+            MySqlCommand cmd3 = new MySqlCommand("update zaiko set jyusyu = jyusyu + @jyusyu, zaisyu = zaisyu + @zaisyu, torisyu = torisyu + @torisyu, " +
+                "syukasu = syukasu + @syukasu, zaiko = zaiko - @zaiko, syukabi = @syukabi," +
+                "sku10 = sku10 - @sku10,sku11 = sku11 - @sku11,sku12 = sku12 - @sku12,sku13 = sku13 - @sku13,sku14 = sku14 - @sku14,sku15 = sku15 - @sku15," +
+                "sku16 = sku16 - @sku16,sku17 = sku17 - @sku17,sku18 = sku18 - @sku18,sku19 = sku19 - @sku19,sku20 = sku20 - @sku20," +
+                "sku21 = sku21 - @sku21, sku22 = sku22 - @sku22, sku23 = sku23 - @sku23, sku24 = sku24 - @sku24, sku25 = sku25 - @sku25," +
+                "sku26 = sku26 - @sku26, sku27 = sku27 - @sku27, sku28 = sku28 - @sku28, sku29 = sku29 - @sku29, sku30 = sku30 - @sku30," +
+                "sku31 = sku31 - @sku31, sku32 = sku32 - @sku32, sku33 = sku33 - @sku33, sku34 = sku34 - @sku34, sku35 = sku35 - @sku35," +
+                "sku36 = sku36 - @sku36, sku37 = sku37 - @sku37, sku38 = sku38 - @sku38, sku39 = sku39 - @sku39, sku40 = sku40 - @sku40," +
+                "sku41 = sku41 - @sku41, sku42 = sku42 - @sku42, sku43 = sku43 - @sku43, sku44 = sku44 - @sku44, sku45 = sku45 - @sku45," +
+                "sku46 = sku46 - @sku46, sku47 = sku47 - @sku47, sku48 = sku48 - @sku48, sku49 = sku49 - @sku49, sku50 = sku50 - @sku50," +
+                "sku51 = sku51 - @sku51, sku52 = sku52 - @sku52, sku53 = sku53 - @sku53, sku54 = sku54 - @sku54, sku55 = sku55 - @sku55," +
+                "sku56 = sku56 - @sku56, sku57 = sku57 - @sku57, sku58 = sku58 - @sku58, sku59 = sku59 - @sku59, sku60 = sku60 - @sku60," +
+                "sku61 = sku61 - @sku61, sku62 = sku62 - @sku62, sku63 = sku63 - @sku63, sku64 = sku64 - @sku64, sku65 = sku65 - @sku65," +
+                "sku66 = sku66 - @sku66, sku67 = sku67 - @sku67, sku68 = sku68 - @sku68, sku69 = sku69 - @sku69, sku70 = sku70 - @sku70," +
+                "sku71 = sku71 - @sku71, sku72 = sku72 - @sku72, sku73 = sku73 - @sku73, sku74 = sku74 - @sku74, sku75 = sku75 - @sku75," +
+                "sku76 = sku76 - @sku76, sku77 = sku77 - @sku77, sku78 = sku78 - @sku78, sku79 = sku79 - @sku79, sku80 = sku80 - @sku80," +
+                "sku81 = sku81 - @sku81, sku82 = sku82 - @sku82, sku83 = sku83 - @sku83, sku84 = sku84 - @sku84, sku85 = sku85 - @sku85," +
+                "sku86 = sku86 - @sku86, sku87 = sku87 - @sku87, sku88 = sku88 - @sku88, sku89 = sku89 - @sku89, sku30 = sku30 - @sku30," +
+                "sku91 = sku91 - @sku91, sku92 = sku92 - @sku92, sku93 = sku93 - @sku93, sku94 = sku94 - @sku94, sku95 = sku95 - @sku95," +
+                "sku96 = sku96 - @sku96, sku97 = sku97 - @sku97, sku98 = sku98 - @sku98, sku99 = sku99 - @sku99, sku100 = sku100 - @sku100," +
+                "sku101 = sku101 - @sku101, sku102 = sku102 - @sku102, sku103 = sku103 - @sku103, sku104 = sku104 - @sku104, sku105 = sku105 - @sku105," +
+                "sku106 = sku106 - @sku106, sku107 = sku107 - @sku107, sku108 = sku108 - @sku108, sku109 = sku109 - @sku109, sku110 = sku110 - @sku110," +
+                "sku111 = sku111 - @sku111, sku112 = sku112 - @sku112, sku113 = sku113 - @sku113, sku114 = sku114 - @sku114, sku115 = sku115 - @sku115," +
+                "sku116 = sku116 - @sku116, sku117 = sku117 - @sku117, sku118 = sku118 - @sku118, sku119 = sku119 - @sku119, sku120 = sku120 - @sku120," +
+                "sku121 = sku121 - @sku121, sku122 = sku122 - @sku122, sku123 = sku123 - @sku123, sku124 = sku124 - @sku124, sku125 = sku125 - @sku125," +
+                "sku126 = sku126 - @sku126, sku127 = sku127 - @sku127, sku128 = sku128 - @sku128, sku129 = sku129 - @sku129, sku130 = sku130 - @sku130" +
+                " where souko = @souko and shocd = @shocd", conn);
+            // パラメータ設定
+            cmd3.Parameters.Add(new MySqlParameter("souko", txtSyukosouko.Text));
+            cmd3.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, 0].Value));
+            cmd3.Parameters.Add(new MySqlParameter("jyusyu", num2));
+            cmd3.Parameters.Add(new MySqlParameter("zaisyu", num1));
+            cmd3.Parameters.Add(new MySqlParameter("torisyu", num3));
+            cmd3.Parameters.Add(new MySqlParameter("syukasu", int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString())));
+            cmd3.Parameters.Add(new MySqlParameter("zaiko", int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString())));
+            DateTime.TryParse(txtSijibi.Text, out dt);
+            cmd3.Parameters.Add(new MySqlParameter("nyukabi", dt));
+
+            string strsku = "";
+            int l = 10;
+            for (int j = 0; j < 11; j++)
+            {
+                for (int k = 0; k < 11; k++)
+                {
+                    strsku = "sku" + l.ToString();
+                    if (iDpKubun == 3)
+                    {
+                        cmd3.Parameters.Add(new MySqlParameter(strsku, sizecolor[0, k, j]));
+                    }
+                    else
+                    {
+                        cmd3.Parameters.Add(new MySqlParameter(strsku, 0));
+                    }
+                    l++;
+                }
+            }
+
             //MySqlCommand cmd2 = new MySqlCommand("SELECT LAST_INSERT_ID()", conn);
             try
             {
                 // オープン
-                //cmd1.Connection.Open();
+                cmd3.Connection.Open();
                 // 実行
-                cmd1.ExecuteNonQuery();
+                cmd3.ExecuteNonQuery();
                 // 更新IDを取得
                 //var id = cmd2.ExecuteScalar();
                 // クローズ
-                //cmd1.Connection.Close();
+                cmd3.Connection.Close();
             }
             catch (SqlException ex)
             {
                 // 例外処理
                 MessageBox.Show("例外発生:" + ex.Message);
             }
-            if (iKubun == 1)
+        }
+        #endregion
+
+        #region 在庫マスタ更新処理（新規追加）zaiko_update_new()
+        private void zaiko_update_new()
+        {
+            zaiko_insert(1);
+        }
+        #endregion
+
+        #region 在庫マスタ削除処理 zaiko_delete()
+        private void zaiko_delete()
+        {
+            //サーバー接続
+            string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
+            MySqlConnection conn = new MySqlConnection(connstr);
+
+            int num1 = 0;
+            int num2 = 0;
+            int num3 = 0;
+            switch (iDpKubun)
             {
-                string str = strkubun + "しました。";
-                MessageBox.Show(str);
+                case 0:
+                    num1 = int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString());
+                    num2 = 0;
+                    num3 = 0;
+                    break;
+                case 1:
+                    num1 = 0;
+                    num2 = int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString());
+                    num3 = 0;
+                    break;
+                case 2:
+                    num1 = 0;
+                    num2 = 0;
+                    num3 = int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString());
+                    break;
+            }
+            MySqlCommand cmd3 = new MySqlCommand("update zaiko set jyusyu = jyusyu - @jyusyu, zaisyu = zaisyu - @zaisyu, torisyu = torisyu - @torisyu,  " +
+                "syukasu = syukasu - @syukasu, zaiko = zaiko + @zaiko, syukabi = @syukabi," +
+                "sku10 = sku10 + @sku10,sku11 = sku11 + @sku11,sku12 = sku12 + @sku12,sku13 = sku13 + @sku13,sku14 = sku14 + @sku14,sku15 = sku15 + @sku15," +
+                "sku16 = sku16 + @sku16,sku17 = sku17 + @sku17,sku18 = sku18 + @sku18,sku19 = sku19 + @sku19,sku20 = sku20 + @sku20," +
+                "sku21 = sku21 + @sku21, sku22 = sku22 + @sku22, sku23 = sku23 + @sku23, sku24 = sku24 + @sku24, sku25 = sku25 + @sku25," +
+                "sku26 = sku26 + @sku26, sku27 = sku27 + @sku27, sku28 = sku28 + @sku28, sku29 = sku29 + @sku29, sku30 = sku30 + @sku30," +
+                "sku31 = sku31 + @sku31, sku32 = sku32 + @sku32, sku33 = sku33 + @sku33, sku34 = sku34 + @sku34, sku35 = sku35 + @sku35," +
+                "sku36 = sku36 + @sku36, sku37 = sku37 + @sku37, sku38 = sku38 + @sku38, sku39 = sku39 + @sku39, sku40 = sku40 + @sku40," +
+                "sku41 = sku41 + @sku41, sku42 = sku42 + @sku42, sku43 = sku43 + @sku43, sku44 = sku44 + @sku44, sku45 = sku45 + @sku45," +
+                "sku46 = sku46 + @sku46, sku47 = sku47 + @sku47, sku48 = sku48 + @sku48, sku49 = sku49 + @sku49, sku50 = sku50 + @sku50," +
+                "sku51 = sku51 + @sku51, sku52 = sku52 + @sku52, sku53 = sku53 + @sku53, sku54 = sku54 + @sku54, sku55 = sku55 + @sku55," +
+                "sku56 = sku56 + @sku56, sku57 = sku57 + @sku57, sku58 = sku58 + @sku58, sku59 = sku59 + @sku59, sku60 = sku60 + @sku60," +
+                "sku61 = sku61 + @sku61, sku62 = sku62 + @sku62, sku63 = sku63 + @sku63, sku64 = sku64 + @sku64, sku65 = sku65 + @sku65," +
+                "sku66 = sku66 + @sku66, sku67 = sku67 + @sku67, sku68 = sku68 + @sku68, sku69 = sku69 + @sku69, sku70 = sku70 + @sku70," +
+                "sku71 = sku71 + @sku71, sku72 = sku72 + @sku72, sku73 = sku73 + @sku73, sku74 = sku74 + @sku74, sku75 = sku75 + @sku75," +
+                "sku76 = sku76 + @sku76, sku77 = sku77 + @sku77, sku78 = sku78 + @sku78, sku79 = sku79 + @sku79, sku80 = sku80 + @sku80," +
+                "sku81 = sku81 + @sku81, sku82 = sku82 + @sku82, sku83 = sku83 + @sku83, sku84 = sku84 + @sku84, sku85 = sku85 + @sku85," +
+                "sku86 = sku86 + @sku86, sku87 = sku87 + @sku87, sku88 = sku88 + @sku88, sku89 = sku89 + @sku89, sku30 = sku30 + @sku30," +
+                "sku91 = sku91 + @sku91, sku92 = sku92 + @sku92, sku93 = sku93 + @sku93, sku94 = sku94 + @sku94, sku95 = sku95 + @sku95," +
+                "sku96 = sku96 + @sku96, sku97 = sku97 + @sku97, sku98 = sku98 + @sku98, sku99 = sku99 + @sku99, sku100 = sku100 + @sku100," +
+                "sku101 = sku101 + @sku101, sku102 = sku102 + @sku102, sku103 = sku103 + @sku103, sku104 = sku104 + @sku104, sku105 = sku105 + @sku105," +
+                "sku106 = sku106 + @sku106, sku107 = sku107 + @sku107, sku108 = sku108 + @sku108, sku109 = sku109 + @sku109, sku110 = sku110 + @sku110," +
+                "sku111 = sku111 + @sku111, sku112 = sku112 + @sku112, sku113 = sku113 + @sku113, sku114 = sku114 + @sku114, sku115 = sku115 + @sku115," +
+                "sku116 = sku116 + @sku116, sku117 = sku117 + @sku117, sku118 = sku118 + @sku118, sku119 = sku119 + @sku119, sku120 = sku120 + @sku120," +
+                "sku121 = sku121 + @sku121, sku122 = sku122 + @sku122, sku123 = sku123 + @sku123, sku124 = sku124 + @sku124, sku125 = sku125 + @sku125," +
+                "sku126 = sku126 + @sku126, sku127 = sku127 + @sku127, sku128 = sku128 + @sku128, sku129 = sku129 + @sku129, sku130 = sku130 + @sku130" +
+                " where souko = @souko and shocd = @shocd", conn);
+            // パラメータ設定
+            cmd3.Parameters.Add(new MySqlParameter("souko", txtSyukosouko.Text));
+            cmd3.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, 0].Value));
+            cmd3.Parameters.Add(new MySqlParameter("jyusyu", num2));
+            cmd3.Parameters.Add(new MySqlParameter("zaisyu", num1));
+            cmd3.Parameters.Add(new MySqlParameter("torisyu", num3));
+            cmd3.Parameters.Add(new MySqlParameter("syukasu", int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString())));
+            cmd3.Parameters.Add(new MySqlParameter("zaiko", int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString())));
+            DateTime.TryParse(txtSijibi.Text, out dt);
+            cmd3.Parameters.Add(new MySqlParameter("syukabi", dt));
+
+            string strsku = "";
+            int l = 10;
+            for (int j = 0; j < 11; j++)
+            {
+                for (int k = 0; k < 11; k++)
+                {
+                    strsku = "sku" + l.ToString();
+                    cmd3.Parameters.Add(new MySqlParameter(strsku, sizecolor[0,k, j]));
+                    l++;
+                }
+            }
+
+            //MySqlCommand cmd2 = new MySqlCommand("SELECT LAST_INSERT_ID()", conn);
+            try
+            {
+                // オープン
+                cmd3.Connection.Open();
+                // 実行
+                cmd3.ExecuteNonQuery();
+                // 更新IDを取得
+                //var id = cmd2.ExecuteScalar();
+                // クローズ
+                cmd3.Connection.Close();
+            }
+            catch (SqlException ex)
+            {
+                // 例外処理
+                MessageBox.Show("例外発生:" + ex.Message);
             }
         }
         #endregion
+
 
         private void Syukkasiji_Shown(object sender, EventArgs e)
         {
@@ -1205,7 +1376,7 @@ namespace kitahara
                         //入力した値をキャンセルして元に戻すには、次のようにする
                         //dgv.CancelEdit();
                         //キャンセルする
-                        e.Cancel = true;
+                        //e.Cancel = true;
                         Action a = () => dataGridView2.CurrentCell = dataGridView2[kubun, dataGridView2.CurrentCellAddress.Y];
                         BeginInvoke(a);
                     }
@@ -1218,7 +1389,7 @@ namespace kitahara
                         //入力した値をキャンセルして元に戻すには、次のようにする
                         //dgv.CancelEdit();
                         //キャンセルする
-                        e.Cancel = true;
+                        //e.Cancel = true;
                         Action a = () => dataGridView2.CurrentCell = dataGridView2[ttantocd, dataGridView2.CurrentCellAddress.Y];
                         BeginInvoke(a);
                     }
@@ -1230,7 +1401,7 @@ namespace kitahara
                         //入力した値をキャンセルして元に戻すには、次のようにする
                         //dgv.CancelEdit();
                         //キャンセルする
-                        e.Cancel = true;
+                        //e.Cancel = true;
                         Action a = () => dataGridView2.CurrentCell = dataGridView2[syukkasijisu, dataGridView2.CurrentCellAddress.Y];
                         BeginInvoke(a);
                     }
@@ -1353,15 +1524,15 @@ namespace kitahara
                         //テーブル出力
                         while (reader.Read())
                         {
-                            row1 = reader["shohinmei"].ToString();
-                            colsku = reader["sku"].ToString();
+                            dataGridView2[colsyohinmei, row].Value = reader["shohinmei"].ToString();
+                            flgsku = reader["sku"].ToString();
 
                             //inyukasu = int.Parse(reader["nyukasu"].ToString());
                             //ijittusu = int.Parse(reader["jyuchusu"].ToString());
                             
 
                         }
-                        dataGridView2[colsyohinmei, row].Value = row1;
+                         
                     }
 
                     cmd.Connection.Close();
@@ -1416,7 +1587,7 @@ namespace kitahara
                     switch (iKubun) {
                         case 1:
                             //skuが"1"のとき、ダイアログを開く
-                            if (colsku == "True")
+                            if (flgsku == "True")
                             {
                                 Sizecolor1 sc = new Sizecolor1();
                                 sc.ShowDialog();
@@ -1432,7 +1603,7 @@ namespace kitahara
                                 flgtotal = true;
                                 //dataGridView2.EndEdit();
                                 sc.Dispose();
-                                colsku = "False";
+                                flgsku = "False";
                                 //SendKeys.Send("{TAB}");
                             }
                             else
@@ -1447,7 +1618,7 @@ namespace kitahara
                             break;
                         case 2:
                             //skuが"1"のとき、ダイアログを開く
-                            if (colsku == "True")
+                            if (flgsku == "True")
                             {
                                 Sizecolor2 sc = new Sizecolor2();
                                 for (int i = 0; i < 11; i++)
@@ -1470,7 +1641,7 @@ namespace kitahara
                                 flgtotal = true;
                                 //dataGridView2.EndEdit();
                                 sc.Dispose();
-                                colsku = "False";
+                                flgsku = "False";
                                 //SendKeys.Send("{TAB}");
                             }
                             else
