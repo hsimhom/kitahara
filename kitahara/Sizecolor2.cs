@@ -16,6 +16,8 @@ namespace kitahara
         public int[,] scdata = new int[11, 11];
         public int total = 0;
 
+        public Boolean flgzero = true;
+
         public Sizecolor2()
         {
             InitializeComponent();
@@ -238,7 +240,7 @@ namespace kitahara
                 "質問",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Exclamation,
-                MessageBoxDefaultButton.Button2);
+                MessageBoxDefaultButton.Button1);
 
             //何が選択されたか調べる
             if (result == DialogResult.Yes)
@@ -249,10 +251,17 @@ namespace kitahara
                     for (int j = 0; j < 11; j++)
                     {
                         scdata[i, j] = int.Parse(dataGridView1[i + 1, j].Value.ToString());
+                        total += scdata[i, j];
+                        if (scdata[i, j] != 0)
+                            flgzero = false;
                     }
-                    total += int.Parse(dataGridView1[i + 1, 11].Value.ToString());
+                    
                 }
-
+                if (flgzero)
+                {
+                    MessageBox.Show("データがありません。");
+                    return;
+                }
                 this.Close();
             }
             else if (result == DialogResult.No)

@@ -24,6 +24,8 @@ namespace kitahara
 
         // 色サイズの変更前の数量
         int[,] sizecolor_bk = new int[11, 11];
+
+        // 出荷指示数の変更前の数量
         int suryou_bk = 0;
         
         string row1 = "";
@@ -35,7 +37,8 @@ namespace kitahara
         // 入力区分
         int iKubun = 1;
 
-        int iDpKubun = 1;
+        // 出庫区分
+        int iDpKubun = 0;
 
         DateTime dt;
 
@@ -43,6 +46,7 @@ namespace kitahara
         string strkubun = "";
 
         Boolean flgtotal = false;
+        Boolean showsku = true;
 
         const int colno = 0;
         const int colhinban = 1;
@@ -58,6 +62,21 @@ namespace kitahara
         const int ttantocd = 11;
         const int syukkasijisu = 12;
         const int biko = 13;
+
+        // 発注数
+        int ihattyusu = 0;
+        // 入荷数
+        int inyukasu = 0;
+        // 受注数
+        int ijittusu = 0;
+        // 出荷数
+        int isyukasu = 0;
+        // 取置在庫
+        int itzaiko = 0;
+        // 計算在庫
+        int ikzaiko = 0;
+        // 現物在庫
+        int igzaiko = 0;
 
         public Syukkasiji()
         {
@@ -131,6 +150,18 @@ namespace kitahara
             }
             dataGridView2.Columns[syukkasijisu].DefaultCellStyle.Format = "#,0";
             dataGridView2.Columns[syukkasijisu].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+
+            for (int i = 0; i < 11; i++)
+            {
+                for (int j = 0; j < 11; j++)
+                {
+                    for (int k = 0; k < 10; k++)
+                    {
+                        sizecolor[k, i, j] = 0;
+                    }
+                    sizecolor_bk[i, j] = 0;
+                }
+            }
         }
         #endregion
 
@@ -600,7 +631,7 @@ namespace kitahara
                         }
                     }
                 }
-                //flgnodata[row] = false;
+                flgnodata[0] = false;
             }
             else
             {
@@ -615,6 +646,7 @@ namespace kitahara
                         sizecolor[0, i, j] = 0;
                     }
                 }
+                flgnodata[0] = true;
             }
 
             ikzaiko = ihattyusu - ijittusu - isyukasu - itzaiko;
@@ -1187,7 +1219,7 @@ namespace kitahara
             cmd3.Parameters.Add(new MySqlParameter("syukasu", int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString())));
             cmd3.Parameters.Add(new MySqlParameter("zaiko", int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString())));
             DateTime.TryParse(txtSijibi.Text, out dt);
-            cmd3.Parameters.Add(new MySqlParameter("nyukabi", dt));
+            cmd3.Parameters.Add(new MySqlParameter("syukabi", dt));
 
             string strsku = "";
             int l = 10;
@@ -1367,16 +1399,22 @@ namespace kitahara
         private void dataGridView2_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             DataGridViewEx dgv = (DataGridViewEx)sender;
+            //新しい行のセルでなく、セルの内容が変更されている時だけ検証する
+            if (e.RowIndex == dgv.NewRowIndex || !dgv.IsCurrentCellDirty)
+            {
+                return;
+            }
+
             switch (dataGridView2.CurrentCellAddress.X)
             {
                 case kubun:
                     if (e.FormattedValue.ToString() == "" || !Regex.IsMatch(e.FormattedValue.ToString(), @"^[0-2]{1}$"))
-                    {
+                        {
                         MessageBox.Show("0,1,2を入力してください。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         //入力した値をキャンセルして元に戻すには、次のようにする
-                        //dgv.CancelEdit();
+                        dgv.CancelEdit();
                         //キャンセルする
-                        //e.Cancel = true;
+                        e.Cancel = true;
                         Action a = () => dataGridView2.CurrentCell = dataGridView2[kubun, dataGridView2.CurrentCellAddress.Y];
                         BeginInvoke(a);
                     }
@@ -1387,9 +1425,9 @@ namespace kitahara
                     {
                         MessageBox.Show("数字を入力してください。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         //入力した値をキャンセルして元に戻すには、次のようにする
-                        //dgv.CancelEdit();
+                        dgv.CancelEdit();
                         //キャンセルする
-                        //e.Cancel = true;
+                        e.Cancel = true;
                         Action a = () => dataGridView2.CurrentCell = dataGridView2[ttantocd, dataGridView2.CurrentCellAddress.Y];
                         BeginInvoke(a);
                     }
@@ -1399,9 +1437,9 @@ namespace kitahara
                     {
                         MessageBox.Show("数字を入力してください。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         //入力した値をキャンセルして元に戻すには、次のようにする
-                        //dgv.CancelEdit();
+                        dgv.CancelEdit();
                         //キャンセルする
-                        //e.Cancel = true;
+                        e.Cancel = true;
                         Action a = () => dataGridView2.CurrentCell = dataGridView2[syukkasijisu, dataGridView2.CurrentCellAddress.Y];
                         BeginInvoke(a);
                     }
@@ -1431,6 +1469,9 @@ namespace kitahara
                     BeginInvoke(a);
                     //dataGridView2.EndEdit();
                     break;
+                case syukkasijisu:
+                    showsku = true;
+                    break;
 
 
             }
@@ -1457,38 +1498,34 @@ namespace kitahara
 
         private void dataGridView2_KeyDown(object sender, KeyEventArgs e)
         {
-            switch (dataGridView2.CurrentCellAddress.X)
+            if (e.KeyData == Keys.Enter)
             {
-                case syukkasijisu:
-                    if (flgtotal)
-                    {
-                        flgtotal = false;
-                        dataGridView2[syukkasijisu, dataGridView2.CurrentCellAddress.Y].Value = total;
-                        //SendKeys.Send("{TAB}");
-                        //e.Handled = true;
-                    }
-                    break;
+                switch (dataGridView2.CurrentCellAddress.X)
+                {
+                    case colhinban:
+                        Detectsku(dataGridView2.CurrentCellAddress.Y);
+                        break;
+
+                    case syukkasijisu:
+                        //if (flgtotal)
+                        //{
+                            Showsku(dataGridView2.CurrentCellAddress.Y);
+                            flgtotal = false;
+                            dataGridView2[syukkasijisu, dataGridView2.CurrentCellAddress.Y].Value = total;
+                            //SendKeys.Send("{TAB}");
+                            //e.Handled = true;
+                        //}
+                        break;
+                }
+                SendKeys.Send("{TAB}");
+                e.Handled = true;
             }
-            
          
         }
 
         private void dataGridView2_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            // 発注数
-            int ihattyusu = 0;
-            // 入荷数
-            int inyukasu = 0;
-            // 受注数
-            int ijittusu = 0;
-            // 出荷数
-            int isyukasu = 0;
-            // 取置在庫
-            int itzaiko = 0;
-            // 計算在庫
-            int ikzaiko = 0;
-            // 現物在庫
-            int igzaiko = 0;
+            
 
             int col = dataGridView2.CurrentCellAddress.X;
             int row = dataGridView2.CurrentCellAddress.Y;
@@ -1497,166 +1534,25 @@ namespace kitahara
             if (e.KeyCode == Keys.Enter)
             {
 
-                string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
-                MySqlConnection conn = new MySqlConnection(connstr);
-                conn.Open();
-
+                
                 //dataGridView2.EndEdit();
+                switch (col)
+                {
+                    case colhinban:
+                        break;
+
+                }
                 if (col == colhinban)
                 {
                     dataGridView2.EndEdit();
                     //サーバー接続
-
-
-                    //SQL実行
-                    MySqlCommand cmd = new MySqlCommand("SELECT shohinmei, sku, nyukasu, jyuchusu, syukasu FROM shohin where shocd = @shocd", conn);
-                    cmd.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, row].Value.ToString()));
-                    MySqlDataReader reader = cmd.ExecuteReader();
-
-                    if (!reader.HasRows)
-                    {
-                        MessageBox.Show("該当する商品がありません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        dataGridView2.CurrentCell = dataGridView2[colhinban, row];
-                        return;
-                    }
-                    else
-                    {
-                        //テーブル出力
-                        while (reader.Read())
-                        {
-                            dataGridView2[colsyohinmei, row].Value = reader["shohinmei"].ToString();
-                            flgsku = reader["sku"].ToString();
-
-                            //inyukasu = int.Parse(reader["nyukasu"].ToString());
-                            //ijittusu = int.Parse(reader["jyuchusu"].ToString());
-                            
-
-                        }
-                         
-                    }
-
-                    cmd.Connection.Close();
-                    cmd.Connection.Open();
-
-                    cmd = new MySqlCommand("SELECT * FROM zaiko where shocd = @shocd and souko = @souko", conn);
-                    cmd.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, row].Value.ToString()));
-                    cmd.Parameters.Add(new MySqlParameter("souko", txtSyukosouko.Text));
-                    MySqlDataReader reader2 = cmd.ExecuteReader();
-
-
-                    if (reader2.HasRows)
-                    {
-                        while (reader2.Read())
-                        {
-                            ihattyusu = int.Parse(reader2["hatsu"].ToString());
-                            itzaiko = int.Parse(reader2["torioki"].ToString());
-                            inyukasu = int.Parse(reader2["nyukasu"].ToString());
-                            ijittusu = int.Parse(reader2["jyuchusu"].ToString());
-                            isyukasu = int.Parse(reader2["syukasu"].ToString());
-                            igzaiko = int.Parse(reader2["zaiko"].ToString());
-                        }
-                        flgnodata[row] = false;
-                    }
-                    else
-                    {
-                        // 在庫マスタにデータがない
-                        ihattyusu = 0;
-                        itzaiko = 0;
-                        flgnodata[row] = true;
-                    }
-
-                    // 計算在庫=在庫マスタの現物在庫＋発注数ー入荷数ー受注数ー出荷数ー取置在庫
-                    // → 在庫マスタの現物在庫＋発注数ー入荷数ー受注数+出荷数ー取置在庫
-                    ikzaiko = igzaiko + ihattyusu - inyukasu - ijittusu + isyukasu - itzaiko;
-                    //igzaiko = inyukasu = isyukasu;
-
-                    dataGridView2[colsyohinmei, row].Value = row1;
-                    dataGridView2[hattyusu, row].Value = ihattyusu;
-                    dataGridView2[nyukasu, row].Value = inyukasu;
-                    dataGridView2[jittusu, row].Value = ijittusu;
-                    dataGridView2[syukasu, row].Value = isyukasu;
-                    dataGridView2[tzaiko, row].Value = itzaiko;
-                    dataGridView2[kzaiko, row].Value = ikzaiko;
-                    dataGridView2[gzaiko, row].Value = igzaiko;
-                    dataGridView2.EndEdit();
-                    SendKeys.Send("{TAB}");
+                    
 
                 }
                 else if (col == syukkasijisu)
                 {
-                    switch (iKubun) {
-                        case 1:
-                            //skuが"1"のとき、ダイアログを開く
-                            if (flgsku == "True")
-                            {
-                                Sizecolor1 sc = new Sizecolor1();
-                                sc.ShowDialog();
-                                for (int i = 0; i < 11; i++)
-                                {
-                                    for (int j = 0; j < 11; j++)
-                                    {
-                                        sizecolor[row, i, j] = sc.scdata[i, j];
-                                    }
-                                }
-                                dataGridView2[syukkasijisu, row].Value = sc.total;
-                                total = sc.total;
-                                flgtotal = true;
-                                //dataGridView2.EndEdit();
-                                sc.Dispose();
-                                flgsku = "False";
-                                //SendKeys.Send("{TAB}");
-                            }
-                            else
-                            {
-                                flgtotal = false;
-                            }
-                            if (itzaiko > 0 && igzaiko < int.Parse(dataGridView2[syukkasijisu, row].Value.ToString()))
-                            {
-                                MessageBox.Show("取置在庫から出荷してください。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return;
-                            }
-                            break;
-                        case 2:
-                            //skuが"1"のとき、ダイアログを開く
-                            if (flgsku == "True")
-                            {
-                                Sizecolor2 sc = new Sizecolor2();
-                                for (int i = 0; i < 11; i++)
-                                {
-                                    for (int j = 0; j < 11; j++)
-                                    {
-                                        sc.scdata[i, j] = sizecolor[0, i, j];
-                                    }
-                                }
-                                sc.ShowDialog();
-                                for (int i = 0; i < 11; i++)
-                                {
-                                    for (int j = 0; j < 11; j++)
-                                    {
-                                        sizecolor[0, i, j] = sc.scdata[i, j];
-                                    }
-                                }
-                                dataGridView2[syukkasijisu, row].Value = sc.total;
-                                total = sc.total;
-                                flgtotal = true;
-                                //dataGridView2.EndEdit();
-                                sc.Dispose();
-                                flgsku = "False";
-                                //SendKeys.Send("{TAB}");
-                            }
-                            else
-                            {
-                                flgtotal = false;
-                            }
-                            if (itzaiko > 0 && igzaiko < int.Parse(dataGridView2[syukkasijisu, row].Value.ToString()))
-                            {
-                                MessageBox.Show("取置在庫から出荷してください。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return;
-                            }
-                            break;
-                        case 3:
-                            break;
-                    }
+                    
+                    
                 }
                 
             }
@@ -1742,7 +1638,7 @@ namespace kitahara
                 "質問",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Exclamation,
-                MessageBoxDefaultButton.Button2);
+                MessageBoxDefaultButton.Button1);
 
             //何が選択されたか調べる
             if (result == DialogResult.Yes)
@@ -1754,9 +1650,9 @@ namespace kitahara
                         InitGrid();
                         break;
                     case 2:
-                        //updatedata();
-                        deletedata();
-                        Insertdata();
+                        updatedata();
+                        //deletedata();
+                        //Insertdata();
                         break;
                     case 3:
                         deletedata();
@@ -1780,7 +1676,7 @@ namespace kitahara
                 "質問",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Exclamation,
-                MessageBoxDefaultButton.Button2);
+                MessageBoxDefaultButton.Button1);
 
             //何が選択されたか調べる
             if (result == DialogResult.Yes)
@@ -1803,7 +1699,7 @@ namespace kitahara
                 "質問",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Exclamation,
-                MessageBoxDefaultButton.Button2);
+                MessageBoxDefaultButton.Button1);
 
             //何が選択されたか調べる
             if (result == DialogResult.Yes)
@@ -1818,5 +1714,154 @@ namespace kitahara
                 return;
             }
         }
+        private void Showsku(int row)
+        {
+            //skuが"1"のとき、ダイアログを開く
+            if (flgsku == "True")
+            {
+                flgsizecolor[row] = true;
+
+                Sizecolor2 sc = new Sizecolor2();
+                if (iKubun == 2)
+                {
+                    for (int i = 0; i < 11; i++)
+                    {
+                        for (int j = 0; j < 11; j++)
+                        {
+                            sc.scdata[i, j] = sizecolor_bk[i, j];
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 11; i++)
+                    {
+                        for (int j = 0; j < 11; j++)
+                        {
+                            sc.scdata[i, j] = sizecolor[row, i, j];
+                        }
+                    }
+                }
+                if (showsku)
+                    sc.ShowDialog();
+                showsku = false;
+                for (int i = 0; i < 11; i++)
+                {
+                    for (int j = 0; j < 11; j++)
+                    {
+                        sizecolor[row, i, j] = sc.scdata[i, j];
+
+                    }
+                }
+                //if (sc.scdata[0,0] == null)
+                //Array.Copy(sc.scdata, sizecolor[row], sc.scdata.Length);
+                dataGridView2[syukkasijisu, row].Value = sc.total;
+                total = sc.total;
+                flgtotal = true;
+                //dataGridView2.EndEdit();
+                //flgcell1 = true;
+                sc.Dispose();
+                //flgsku = "False";
+                //if (flgzero)
+                // MessageBox.Show("nosku");
+            }
+            else
+            {
+                flgtotal = false;
+                flgsizecolor[row] = false;
+                //flgcell1 = true;
+            }
+            
+                    if (itzaiko > 0 && igzaiko < int.Parse(dataGridView2[syukkasijisu, row].Value.ToString()))
+                    {
+                        MessageBox.Show("取置在庫から出荷してください。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    
+            
+            }
+
+        private void Detectsku(int row)
+        {
+            string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
+            MySqlConnection conn = new MySqlConnection(connstr);
+            conn.Open();
+
+            //SQL実行
+            MySqlCommand cmd = new MySqlCommand("SELECT shohinmei, sku, nyukasu, jyuchusu, syukasu FROM shohin where shocd = @shocd", conn);
+            cmd.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, row].Value.ToString()));
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            if (!reader.HasRows)
+            {
+                MessageBox.Show("該当する商品がありません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                dataGridView2.CurrentCell = dataGridView2[colhinban, row];
+                return;
+            }
+            else
+            {
+                //テーブル出力
+                while (reader.Read())
+                {
+                    row1 = reader["shohinmei"].ToString();
+                    flgsku = reader["sku"].ToString();
+
+                    //inyukasu = int.Parse(reader["nyukasu"].ToString());
+                    //ijittusu = int.Parse(reader["jyuchusu"].ToString());
+
+
+                }
+
+            }
+
+            cmd.Connection.Close();
+            cmd.Connection.Open();
+
+            cmd = new MySqlCommand("SELECT * FROM zaiko where shocd = @shocd and souko = @souko", conn);
+            cmd.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, row].Value.ToString()));
+            cmd.Parameters.Add(new MySqlParameter("souko", txtSyukosouko.Text));
+            MySqlDataReader reader2 = cmd.ExecuteReader();
+
+
+            if (reader2.HasRows)
+            {
+                while (reader2.Read())
+                {
+                    ihattyusu = int.Parse(reader2["hatsu"].ToString());
+                    itzaiko = int.Parse(reader2["torioki"].ToString());
+                    inyukasu = int.Parse(reader2["nyukasu"].ToString());
+                    ijittusu = int.Parse(reader2["jyuchusu"].ToString());
+                    isyukasu = int.Parse(reader2["syukasu"].ToString());
+                    igzaiko = int.Parse(reader2["zaiko"].ToString());
+                }
+                flgnodata[row] = false;
+            }
+            else
+            {
+                // 在庫マスタにデータがない
+                ihattyusu = 0;
+                itzaiko = 0;
+                flgnodata[row] = true;
+            }
+
+            // 計算在庫=在庫マスタの現物在庫＋発注数ー入荷数ー受注数ー出荷数ー取置在庫
+            // → 在庫マスタの現物在庫＋発注数ー入荷数ー受注数+出荷数ー取置在庫
+            ikzaiko = igzaiko + ihattyusu - inyukasu - ijittusu + isyukasu - itzaiko;
+            //igzaiko = inyukasu = isyukasu;
+
+            dataGridView2[colsyohinmei, row].Value = row1;
+            dataGridView2[hattyusu, row].Value = ihattyusu;
+            dataGridView2[nyukasu, row].Value = inyukasu;
+            dataGridView2[jittusu, row].Value = ijittusu;
+            dataGridView2[syukasu, row].Value = isyukasu;
+            dataGridView2[tzaiko, row].Value = itzaiko;
+            dataGridView2[kzaiko, row].Value = ikzaiko;
+            dataGridView2[gzaiko, row].Value = igzaiko;
+            //dataGridView2.EndEdit();
+            //SendKeys.Send("{TAB}");
+
+            dataGridView2.EndEdit();
+        }
     }
+
 }

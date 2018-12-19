@@ -18,16 +18,23 @@ namespace kitahara
         // 在庫マスタにデータがない場合、true
         Boolean[] flgnodata = new Boolean[10];
 
+        // SKUがTrueでSKUデータが入っているとき、True
         Boolean[] flgsizecolor = new Boolean[10];
+
+        // SKUデータ
         public int[,,] sizecolor = new int[10,11,11];
 
+        // SKUデータバックアップ
         int[,] sizecolor_bk = new int[11, 11];
+
+        // 数量バックアップ
         int suryou_bk = 0;
 
         string flgsku = "";
 
-        //string flgsku = "";
+        // SKU数量のトータル
         int total = 0;
+
         DateTime dt;
 
         // 品番入力エラーでも入荷数に飛ぶ不具合のフラグ
@@ -36,10 +43,12 @@ namespace kitahara
 
         Boolean flgtotal = false;
 
+        Boolean showsku = true;
+
         // 入力区分
         int iKubun = 1;
 
-        // 区分
+        // 伝票区分
         int iDpKubun = 1;
         string strkubun;
 
@@ -54,10 +63,9 @@ namespace kitahara
         public Nyukanyuryoku()
         {
             InitializeComponent();
-
-            
         }
 
+        // データグリッドビューの初期化
         private void InitGrid()
         {
             //サーバー接続
@@ -94,6 +102,19 @@ namespace kitahara
             dataGridView2.Columns[colkingaku].ReadOnly = true;
             dataGridView2.Columns[colbiko].HeaderText = "備考";
             dataGridView2.Columns[colbiko].Width = 200;
+
+            // 
+            for (int i = 0; i < 11; i++)
+            {
+                for (int j = 0; j < 11; j++)
+                {
+                    for (int k = 0; k < 10; k++)
+                    {
+                        sizecolor[k, i, j]=0;
+                    }
+                    sizecolor_bk[i, j] = 0;
+                }
+            }
         }
 
 
@@ -135,7 +156,7 @@ namespace kitahara
             return base.ProcessDialogKey(keyData);
         }
 
-        
+        #region 各テキストボックスがアクティブ時の処理
         private void check_textbox()
         {
             Control cControl = this.ActiveControl;
@@ -306,8 +327,9 @@ namespace kitahara
                     
                     break;
             }
-
         }
+        #endregion
+
         #region ログNoから表示を行う
         private void dispdata()
         {
@@ -328,7 +350,6 @@ namespace kitahara
                 //テーブル出力
                 while (reader.Read())
                 {
-                    
                     txtDpKubun.Text = reader["nkbn"].ToString();
                     txtTantoucode.Text = reader["tancd"].ToString();
                     txtNyukasouko.Text = reader["nyukasoko"].ToString();
@@ -396,14 +417,14 @@ namespace kitahara
                     {
                         for (int j = 0; j < 11; j++)
                         {
-
                             string str = "sku" + l.ToString();
                             sizecolor_bk[i, j] = int.Parse(reader2[str].ToString());
+                            sizecolor[0, i, j] = sizecolor_bk[i, j];
                             l++;
                         }
                     }
                 }
-                //flgnodata[row] = false;
+                flgnodata[0] = false;
             }
             else
             {
@@ -418,6 +439,7 @@ namespace kitahara
                         sizecolor[0, i, j] = 0;
                     }
                 }
+                flgnodata[0] = true;
             }
 
             //ikzaiko = ihattyusu - ijittusu - isyukasu - itzaiko;
@@ -545,7 +567,7 @@ namespace kitahara
                             }
                         }
                     }
-                        MySqlCommand cmd = new MySqlCommand("insert into nyukalog ( nyuryokuymd, nyukasoko, nyukaymd, shiresaki, hinban, shohinmei, syukasu, tanka," +
+                        MySqlCommand cmd = new MySqlCommand("insert into nyukalog ( nkbn, nyuryokuymd, nyukasoko, nyukaymd, shiresaki, hinban, shohinmei, syukasu, tanka," +
                             "urikin, biko," +
                             "sku10, sku11, sku12, sku13, sku14, sku15, sku16, sku17, sku18, sku19, sku20," +
                             "sku21, sku22, sku23, sku24, sku25, sku26, sku27, sku28, sku29, sku30," +
@@ -559,7 +581,7 @@ namespace kitahara
                             "sku101, sku102, sku103, sku104, sku105, sku106, sku107, sku108, sku109, sku110," +
                             "sku111, sku112, sku113, sku114, sku115, sku116, sku117, sku118, sku119, sku120," +
                             "sku121, sku122, sku123, sku124, sku125, sku126, sku127, sku128, sku129, sku130) values " +
-                            "( @nyuryokuymd, @nyukasoko, @nyukaymd, @shiresaki, @hinban, @shohinmei, @syukasu, @tanka," +
+                            "( @nkbn, @nyuryokuymd, @nyukasoko, @nyukaymd, @shiresaki, @hinban, @shohinmei, @syukasu, @tanka," +
                             "@urikin, @biko," +
                             "@sku10, @sku11, @sku12, @sku13, @sku14, @sku15, @sku16, @sku17, @sku18, @sku19, @sku20," +
                             "@sku21, @sku22, @sku23, @sku24, @sku25, @sku26, @sku27, @sku28, @sku29, @sku30," +
@@ -573,8 +595,8 @@ namespace kitahara
                             "@sku101, @sku102, @sku103, @sku104, @sku105, @sku106, @sku107, @sku108, @sku109, @sku110," +
                             "@sku111, @sku112, @sku113, @sku114, @sku115, @sku116, @sku117, @sku118, @sku119, @sku120," +
                             "@sku121, @sku122, @sku123, @sku124, @sku125, @sku126, @sku127, @sku128, @sku129, @sku130 )", conn);
-                        cmd.Parameters.Add(new MySqlParameter("nyuryokuymd", DateTime.Today));
-                        cmd.Parameters.Add(new MySqlParameter("nyukasoko", txtNyukasouko.Text));
+                        cmd.Parameters.Add(new MySqlParameter("nkbn", txtDpKubun.Text));
+                    cmd.Parameters.Add(new MySqlParameter("nyuryokuymd", DateTime.Today)); cmd.Parameters.Add(new MySqlParameter("nyukasoko", txtNyukasouko.Text));
                         cmd.Parameters.Add(new MySqlParameter("nyukaymd", dt));
                         cmd.Parameters.Add(new MySqlParameter("shiresaki", txtSiiresaki.Text));
                         cmd.Parameters.Add(new MySqlParameter("hinban", dataGridView2[colhinban, i].Value));
@@ -624,7 +646,7 @@ namespace kitahara
             string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
             MySqlConnection conn = new MySqlConnection(connstr);
             conn.Open();
-            MySqlCommand cmd = new MySqlCommand("delete from syukalog where renban = @renban", conn);
+            MySqlCommand cmd = new MySqlCommand("delete from nyukalog where renban = @renban", conn);
             cmd.Parameters.Add(new MySqlParameter("renban", txtLogno.Text));
             //MySqlDataReader reader = cmd.ExecuteReader();
             try
@@ -699,7 +721,6 @@ namespace kitahara
                     // 在庫マスタにデータがない場合、insert
                     if (flgnodata[i])
                     {
-
                         MySqlCommand cmd3 = new MySqlCommand("insert into zaiko ( souko, shocd, hatsu, nyukasu, jyuchusu, torioki, zaiko, " +
                             nyukabi0 +
                         "sku10, sku11, sku12, sku13, sku14, sku15, sku16, sku17, sku18, sku19, sku20," +
@@ -1269,7 +1290,7 @@ namespace kitahara
                 "質問",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Exclamation,
-                MessageBoxDefaultButton.Button2);
+                MessageBoxDefaultButton.Button1);
 
             //何が選択されたか調べる
             if (result == DialogResult.Yes)
@@ -1293,7 +1314,7 @@ namespace kitahara
                 "質問",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Exclamation,
-                MessageBoxDefaultButton.Button2);
+                MessageBoxDefaultButton.Button1);
 
             //何が選択されたか調べる
             if (result == DialogResult.Yes)
@@ -1306,9 +1327,9 @@ namespace kitahara
                         InitGrid();
                         break;
                     case 2:
-                        //updatedata();
-                        deletedata();
-                        Insertdata();
+                        updatedata();
+                        //deletedata();
+                        //Insertdata();
                         break;
                     case 3:
                         deletedata();
@@ -1332,7 +1353,7 @@ namespace kitahara
                 "質問",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Exclamation,
-                MessageBoxDefaultButton.Button2);
+                MessageBoxDefaultButton.Button1);
 
             //何が選択されたか調べる
             if (result == DialogResult.Yes)
@@ -1376,7 +1397,7 @@ namespace kitahara
             switch (dataGridView2.CurrentCellAddress.X)
             {
                 case colsuryou:
-                    //dataGridView2[colsuryou, dataGridView2.CurrentCellAddress.Y].Value = total;
+                    dataGridView2[colsuryou, dataGridView2.CurrentCellAddress.Y].Value = total;
                     break;
             }
         }
@@ -1433,12 +1454,13 @@ namespace kitahara
 
                 // 入荷数
                 case colsuryou:
-                    
+                    showsku = true;
+                    //dataGridView2[colsuryou, dataGridView2.CurrentCellAddress.Y].Value = total;
                     break;
 
                 // 単価
                 case coltanka:
-                    
+                    dataGridView2[colsuryou, dataGridView2.CurrentCellAddress.Y].Value = total;
                     break;
                 // 仕入金額
                 case colkingaku:
@@ -1477,10 +1499,14 @@ namespace kitahara
             {
                 switch (dataGridView2.CurrentCellAddress.X)
                 {
+                    case colhinban:
+                        Detectsku(dataGridView2.CurrentCellAddress.Y);
+                        break;
                     case colsuryou:
-                        
-                        if (flgtotal)
-                            dataGridView2[colsuryou, dataGridView2.CurrentCellAddress.Y].Value = total;
+
+                        //if (flgtotal)
+                        Showsku(dataGridView2.CurrentCellAddress.Y);
+                        dataGridView2[colsuryou, dataGridView2.CurrentCellAddress.Y].Value = total;
                         break;
                 }
                 SendKeys.Send("{TAB}");
@@ -1492,102 +1518,20 @@ namespace kitahara
         {
             int col = dataGridView2.CurrentCellAddress.X;
             int row = dataGridView2.CurrentCellAddress.Y;
-
+            Boolean flgzero = true;
             if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Tab)
             {
                 switch (col)
                 {
                     case colhinban:
                         dataGridView2.EndEdit();
-                        //サーバー接続
-                        string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
-                        MySqlConnection conn = new MySqlConnection(connstr);
-                        conn.Open();
-
-                        //SQL実行
-                        MySqlCommand cmd = new MySqlCommand("SELECT shohinmei, sku FROM shohin where shocd = '" + dataGridView2[colhinban, row].Value.ToString() + "'", conn);
-                        MySqlDataReader reader = cmd.ExecuteReader();
-
-
-                        if (!reader.HasRows)
-                        {
-                            if (!flgcell2)
-                                MessageBox.Show("該当する商品がありません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            flgcell2 = true;
-                            dataGridView2.CurrentCell = dataGridView2[colhinban, row];
-                            return;
-                        }
-                        //テーブル出力
-                        while (reader.Read())
-                        {
-                            dataGridView2[colsyohinmei, row].Value = reader["shohinmei"].ToString();
-                            flgsku = reader["sku"].ToString();
-                            //Console.WriteLine(string.Join("\t", row));
-                        }
-
-                        cmd.Connection.Close();
-                        cmd.Connection.Open();
-
-                        cmd = new MySqlCommand("SELECT * FROM zaiko where shocd = @shocd and souko = @souko", conn);
-                        cmd.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, row].Value.ToString()));
-                        cmd.Parameters.Add(new MySqlParameter("souko", txtNyukasouko.Text));
-                        MySqlDataReader reader2 = cmd.ExecuteReader();
-
-
-                        if (reader2.HasRows)
-                        {
-                            flgnodata[row] = false;
-                        }
-                        else
-                        {
-                            // 在庫マスタにデータがない
-                            flgnodata[row] = true;
-                        }
-
-                        dataGridView2.EndEdit();
+                        
                         break;
                     case colsuryou:
-                        //skuが"1"のとき、ダイアログを開く
-                        if (flgsku == "True")
-                        {
-                            flgsizecolor[row] = true;
-
-                            Sizecolor2 sc = new Sizecolor2();
-                            if (iKubun == 2)
-                            {
-                                for (int i = 0; i < 11; i++)
-                                {
-                                    for (int j = 0; j < 11; j++)
-                                    {
-                                        sc.scdata[i, j] = sizecolor_bk[i, j];
-                                    }
-                                }
-                            }
-                            sc.ShowDialog();
-                            for (int i = 0; i < 11; i++)
-                            {
-                                for (int j = 0; j < 11; j++)
-                                {
-                                    sizecolor[row, i, j] = sc.scdata[i, j];
-                                }
-                            }
-                            dataGridView2[colsuryou, row].Value = sc.total;
-                            total = sc.total;
-                            flgtotal = true;
-                            //dataGridView2.EndEdit();
-                            //flgcell1 = true;
-                            sc.Dispose();
-                            flgsku = "False";
-                            //dataGridView2.CurrentCell = dataGridView2[colsuryou, row];
-                        }
-                        else
-                        {
-                            flgtotal = false;
-                            flgsizecolor[row] = false;
-                            //flgcell1 = true;
-                        }
+                        
                         //dataGridView2.CurrentCell = dataGridView2[coltanka, row];
                         break;
+                        
                 }
                 
             }
@@ -1602,6 +1546,115 @@ namespace kitahara
         {
             InitGrid();
             txtKubun.Focus();
+        }
+
+        private void Showsku(int row)
+        {
+            //skuが"1"のとき、ダイアログを開く
+            if (flgsku == "True")
+            {
+                flgsizecolor[row] = true;
+
+                Sizecolor2 sc = new Sizecolor2();
+                if (iKubun == 2)
+                {
+                    for (int i = 0; i < 11; i++)
+                    {
+                        for (int j = 0; j < 11; j++)
+                        {
+                            sc.scdata[i, j] = sizecolor_bk[i, j];
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 11; i++)
+                    {
+                        for (int j = 0; j < 11; j++)
+                        {
+                            sc.scdata[i, j] = sizecolor[row, i, j];
+                        }
+                    }
+                }
+                if (showsku)
+                    sc.ShowDialog();
+                showsku = false;
+                for (int i = 0; i < 11; i++)
+                {
+                    for (int j = 0; j < 11; j++)
+                    {
+                        sizecolor[row, i, j] = sc.scdata[i, j];
+                        
+                    }
+                }
+                //if (sc.scdata[0,0] == null)
+                //Array.Copy(sc.scdata, sizecolor[row], sc.scdata.Length);
+                dataGridView2[colsuryou, row].Value = sc.total;
+                total = sc.total;
+                flgtotal = true;
+                //dataGridView2.EndEdit();
+                //flgcell1 = true;
+                sc.Dispose();
+                //flgsku = "False";
+                //if (flgzero)
+                // MessageBox.Show("nosku");
+            }
+            else
+            {
+                flgtotal = false;
+                flgsizecolor[row] = false;
+                //flgcell1 = true;
+            }
+        }
+
+        private void Detectsku(int row)
+        {
+            //サーバー接続
+            string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
+            MySqlConnection conn = new MySqlConnection(connstr);
+            conn.Open();
+
+            //SQL実行
+            MySqlCommand cmd = new MySqlCommand("SELECT shohinmei, sku FROM shohin where shocd = '" + dataGridView2[colhinban, row].Value.ToString() + "'", conn);
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+
+            if (!reader.HasRows)
+            {
+                if (!flgcell2)
+                    MessageBox.Show("該当する商品がありません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                flgcell2 = true;
+                dataGridView2.CurrentCell = dataGridView2[colhinban, row];
+                return;
+            }
+            //テーブル出力
+            while (reader.Read())
+            {
+                dataGridView2[colsyohinmei, row].Value = reader["shohinmei"].ToString();
+                flgsku = reader["sku"].ToString();
+                //Console.WriteLine(string.Join("\t", row));
+            }
+
+            cmd.Connection.Close();
+            cmd.Connection.Open();
+
+            cmd = new MySqlCommand("SELECT * FROM zaiko where shocd = @shocd and souko = @souko", conn);
+            cmd.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, row].Value.ToString()));
+            cmd.Parameters.Add(new MySqlParameter("souko", txtNyukasouko.Text));
+            MySqlDataReader reader2 = cmd.ExecuteReader();
+
+
+            if (reader2.HasRows)
+            {
+                flgnodata[row] = false;
+            }
+            else
+            {
+                // 在庫マスタにデータがない
+                flgnodata[row] = true;
+            }
+
+            dataGridView2.EndEdit();
         }
     }
 }
