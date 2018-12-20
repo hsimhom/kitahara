@@ -52,7 +52,7 @@ namespace kitahara
         private void check_textbox()
         {
             Control cControl = this.ActiveControl;
-            string row = "";
+            //string row = "";
 
             //サーバー接続
             string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
@@ -114,10 +114,10 @@ namespace kitahara
                         else
                         {
                             DateTime dt0 = DateTime.Now;
-                            string temp1 = txtDate1.Text;
+                            string temp1 = txtDate2.Text;
                             string temp2 = temp1.Insert(2, "/");
                             string temp3 = temp2.Insert(0, "/");
-                            txtDate1.Text = dt0.Year.ToString() + temp3;
+                            txtDate2.Text = dt0.Year.ToString() + temp3;
                             DateTime.TryParse(txtDate2.Text, out dt2);
                             txtHinban1.Focus();
                         }

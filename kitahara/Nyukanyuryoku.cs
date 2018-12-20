@@ -42,7 +42,7 @@ namespace kitahara
         
 
         Boolean flgtotal = false;
-
+        Boolean flgsku0 = false;
         Boolean showsku = true;
 
         // 入力区分
@@ -186,21 +186,21 @@ namespace kitahara
                             strkubun = "登録";
                             txtLogno.ReadOnly = true;
                             btnTouroku.Text = "F10:登録";
-                            dataGridView2.Columns[colsuryou].HeaderText = "受注数量";
+                            
                             txtDpKubun.Focus();
                             break;
                         case 2:
                             strkubun = "修正";
                             txtLogno.ReadOnly = false;
                             btnTouroku.Text = "F10:修正";
-                            dataGridView2.Columns[colsuryou].HeaderText = "入荷数量";
+                            
                             txtLogno.Focus();
                             break;
                         case 3:
                             strkubun = "削除";
                             txtLogno.ReadOnly = false;
                             btnTouroku.Text = "F10:削除";
-                            dataGridView2.Columns[colsuryou].HeaderText = "発注数量";
+                            
                             txtLogno.Focus();
                             break;
                     }
@@ -226,6 +226,25 @@ namespace kitahara
                         MessageBox.Show("1,2,3,4を入力してください。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         txtDpKubun.Focus();
                         return;
+                    }
+                    switch (iDpKubun)
+                    {
+                        case 1:
+                            dataGridView2.Columns[colsuryou].HeaderText = "受注数量";
+                            txtSiiresaki.Enabled = true;
+                            break;
+                        case 2:
+                            dataGridView2.Columns[colsuryou].HeaderText = "取置数量";
+                            txtSiiresaki.Enabled = false;
+                            break;
+                        case 3:
+                            dataGridView2.Columns[colsuryou].HeaderText = "入荷数量";
+                            txtSiiresaki.Enabled = true;
+                            break;
+                        case 4:
+                            dataGridView2.Columns[colsuryou].HeaderText = "発注数量";
+                            txtSiiresaki.Enabled = true;
+                            break;
                     }
                     break;
                 case "txtTantoucode":
@@ -271,27 +290,43 @@ namespace kitahara
                     }
                     break;
                 case "txtNyukabi":
-
                     if (!DateTime.TryParse(txtNyukabi.Text, out dt))
                     {
-                        //変換出来たら、dtにその値が入る
-                        MessageBox.Show("日付が正しくありません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        txtNyukabi.Focus();
+                        if (txtNyukabi.TextLength != 4)
+                        {
+                            //変換出来たら、dtにその値が入る
+                            MessageBox.Show("日付が正しくありません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            txtNyukabi.Focus();
+                        }
+                        else
+                        {
+                            DateTime dt1 = DateTime.Now;
+                            string temp1 = txtNyukabi.Text;
+                            string temp2 = temp1.Insert(2, "/");
+                            string temp3 = temp2.Insert(0, "/");
+                            txtNyukabi.Text = dt1.Year.ToString() + temp3;
+                            txtSiiresaki.Focus();
+                        }
                     }
                     else
                         txtSiiresaki.Focus();
-                    break;
+                    if (iDpKubun == 2)
+                        dataGridView2.Focus();
+                    break; 
                 case "txtSiiresaki":
                     
                     cmd1 = new MySqlCommand("", conn);
-                    switch (iKubun)
+                    switch (iDpKubun)
                     {
                         case 1:
                             cmd1 = new MySqlCommand("SELECT tokuisakimei FROM tokuisaki where tokuicd = '" + txtSiiresaki.Text + "'", conn);
                             //reader = cmd1.ExecuteReader();
                             break;
                         case 2:
+
+                            break;
                         case 3:
+                        case 4:
                             cmd1 = new MySqlCommand("SELECT shiresakimei FROM shiresaki where scd = '" + txtSiiresaki.Text + "'", conn);
                             //reader = cmd1.ExecuteReader();
                             break;
@@ -305,13 +340,15 @@ namespace kitahara
                         //テーブル出力
                         while (reader1.Read())
                         {
-                            switch (iKubun)
+                            switch (iDpKubun)
                             {
                                 case 1:
                                     txtSiiresakimei.Text = reader1["tokuisakimei"].ToString();
                                     break;
                                 case 2:
+                                    break;
                                 case 3:
+                                case 4:
                                     txtSiiresakimei.Text = reader1["shiresakimei"].ToString();
                                     break;
                             }
@@ -596,8 +633,10 @@ namespace kitahara
                             "@sku111, @sku112, @sku113, @sku114, @sku115, @sku116, @sku117, @sku118, @sku119, @sku120," +
                             "@sku121, @sku122, @sku123, @sku124, @sku125, @sku126, @sku127, @sku128, @sku129, @sku130 )", conn);
                         cmd.Parameters.Add(new MySqlParameter("nkbn", txtDpKubun.Text));
-                    cmd.Parameters.Add(new MySqlParameter("nyuryokuymd", DateTime.Today)); cmd.Parameters.Add(new MySqlParameter("nyukasoko", txtNyukasouko.Text));
-                        cmd.Parameters.Add(new MySqlParameter("nyukaymd", dt));
+                    cmd.Parameters.Add(new MySqlParameter("nyuryokuymd", DateTime.Today));
+                    cmd.Parameters.Add(new MySqlParameter("nyukasoko", txtNyukasouko.Text));
+                    DateTime.TryParse(txtNyukabi.Text, out dt);
+                    cmd.Parameters.Add(new MySqlParameter("nyukaymd", dt));
                         cmd.Parameters.Add(new MySqlParameter("shiresaki", txtSiiresaki.Text));
                         cmd.Parameters.Add(new MySqlParameter("hinban", dataGridView2[colhinban, i].Value));
                         cmd.Parameters.Add(new MySqlParameter("shohinmei", dataGridView2[colsyohinmei, i].Value));
@@ -691,12 +730,18 @@ namespace kitahara
                     switch (iDpKubun)
                     {
                         case 1:
+                            nyukabi0 = "";
+                            nyukabi1 = "";
+                            nyukabi2 = "";
                             num1 = int.Parse(dataGridView2[colsuryou, i].Value.ToString());
                             num2 = 0;
                             num3 = 0;
                             num4 = 0;
                             break;
                         case 2:
+                            nyukabi0 = "";
+                            nyukabi1 = "";
+                            nyukabi2 = "";
                             num1 = 0;
                             num2 = int.Parse(dataGridView2[colsuryou, i].Value.ToString());
                             num3 = 0;
@@ -712,6 +757,9 @@ namespace kitahara
                             num4 = 0;
                             break;
                         case 4:
+                            nyukabi0 = "";
+                            nyukabi1 = "";
+                            nyukabi2 = "";
                             num1 = 0;
                             num2 = 0;
                             num3 = 0;
@@ -757,7 +805,8 @@ namespace kitahara
                         cmd3.Parameters.Add(new MySqlParameter("torioki", num2));
                         cmd3.Parameters.Add(new MySqlParameter("zaiko", num3));
                         DateTime.TryParse(txtNyukabi.Text, out dt);
-                        cmd3.Parameters.Add(new MySqlParameter("nyukabi", dt));
+                        if (iDpKubun == 3)
+                            cmd3.Parameters.Add(new MySqlParameter("nyukabi", dt));
 
                         string strsku = "";
                         int l = 10;
@@ -766,7 +815,14 @@ namespace kitahara
                             for (int k = 0; k < 11; k++)
                             {
                                 strsku = "sku" + l.ToString();
-                                cmd3.Parameters.Add(new MySqlParameter(strsku, sizecolor[i, k, j]));
+                                if (flgsku0)
+                                {
+                                    cmd3.Parameters.Add(new MySqlParameter(strsku, sizecolor[i, k, j]));
+                                }
+                                else
+                                {
+                                    cmd3.Parameters.Add(new MySqlParameter(strsku, sizecolor[i, k, j]));
+                                }
                                 l++;
                             }
                         }
@@ -838,13 +894,13 @@ namespace kitahara
                             for (int k = 0; k < 11; k++)
                             {
                                 strsku = "sku" + l.ToString();
-                                if (iDpKubun == 3)
+                                if (flgsku0)
                                 {
                                     cmd3.Parameters.Add(new MySqlParameter(strsku, sizecolor[i, k, j]));
                                 }
                                 else
                                 {
-                                    cmd3.Parameters.Add(new MySqlParameter(strsku, 0));
+                                    cmd3.Parameters.Add(new MySqlParameter(strsku, (object)0));
                                 }
                                 l++;
                             }
@@ -868,10 +924,10 @@ namespace kitahara
                             MessageBox.Show("例外発生:" + ex.Message);
                         }
                     }
-                    
+                    zaiko_update_last(i);
                 }
                 i++;
-                zaiko_update_last(i);
+                
             }
         }
         #endregion
@@ -972,7 +1028,7 @@ namespace kitahara
                     }
                     else
                     {
-                        cmd3.Parameters.Add(new MySqlParameter(strsku, 0));
+                        cmd3.Parameters.Add(new MySqlParameter(strsku, (object)0));
                     }
                     l++;
                 }
@@ -1093,7 +1149,7 @@ namespace kitahara
                     }
                     else
                     {
-                        cmd3.Parameters.Add(new MySqlParameter(strsku, 0));
+                        cmd3.Parameters.Add(new MySqlParameter(strsku, (object)0));
                     }
                     l++;
                 }
@@ -1135,7 +1191,7 @@ namespace kitahara
 
             if (iDpKubun == 2)
             {
-                MySqlCommand cmd = new MySqlCommand("update zaiko set soucd = @tancd where souko = @souko and shocd = @shocd", conn);
+                MySqlCommand cmd = new MySqlCommand("update zaiko set souko = @tancd where souko = @souko and shocd = @shocd", conn);
                 // パラメータ設定
                 cmd.Parameters.Add(new MySqlParameter("souko", txtNyukasouko.Text));
                 cmd.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, i2].Value));
@@ -1256,7 +1312,7 @@ namespace kitahara
                     }
                     else
                     {
-                        cmd3.Parameters.Add(new MySqlParameter(strsku, 0));
+                        cmd3.Parameters.Add(new MySqlParameter(strsku, (object)0));
                     }
                     l++;
                 }
@@ -1397,7 +1453,8 @@ namespace kitahara
             switch (dataGridView2.CurrentCellAddress.X)
             {
                 case colsuryou:
-                    dataGridView2[colsuryou, dataGridView2.CurrentCellAddress.Y].Value = total;
+                    if (flgsku0)
+                        dataGridView2[colsuryou, dataGridView2.CurrentCellAddress.Y].Value = total;
                     break;
             }
         }
@@ -1455,12 +1512,13 @@ namespace kitahara
                 // 入荷数
                 case colsuryou:
                     showsku = true;
-                    //dataGridView2[colsuryou, dataGridView2.CurrentCellAddress.Y].Value = total;
+                    Showsku(dataGridView2.CurrentCellAddress.Y);
                     break;
 
                 // 単価
                 case coltanka:
-                    dataGridView2[colsuryou, dataGridView2.CurrentCellAddress.Y].Value = total;
+                    if (flgsku0)
+                        dataGridView2[colsuryou, dataGridView2.CurrentCellAddress.Y].Value = total;
                     break;
                 // 仕入金額
                 case colkingaku:
@@ -1503,10 +1561,11 @@ namespace kitahara
                         Detectsku(dataGridView2.CurrentCellAddress.Y);
                         break;
                     case colsuryou:
-
-                        //if (flgtotal)
-                        Showsku(dataGridView2.CurrentCellAddress.Y);
-                        dataGridView2[colsuryou, dataGridView2.CurrentCellAddress.Y].Value = total;
+                                             
+                            //if (flgtotal)
+                            
+                            dataGridView2[colsuryou, dataGridView2.CurrentCellAddress.Y].Value = total;
+                        
                         break;
                 }
                 SendKeys.Send("{TAB}");
@@ -1518,7 +1577,7 @@ namespace kitahara
         {
             int col = dataGridView2.CurrentCellAddress.X;
             int row = dataGridView2.CurrentCellAddress.Y;
-            Boolean flgzero = true;
+            //Boolean flgzero = true;
             if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Tab)
             {
                 switch (col)
@@ -1551,8 +1610,9 @@ namespace kitahara
         private void Showsku(int row)
         {
             //skuが"1"のとき、ダイアログを開く
-            if (flgsku == "True")
+            if (flgsku == "True" && iDpKubun == 3)
             {
+                flgsku0 = true;
                 flgsizecolor[row] = true;
 
                 Sizecolor2 sc = new Sizecolor2();
@@ -1601,14 +1661,16 @@ namespace kitahara
             }
             else
             {
+                flgsku0 = false;
                 flgtotal = false;
                 flgsizecolor[row] = false;
-                //flgcell1 = true;
+                total = int.Parse(dataGridView2[colsuryou, row].Value.ToString());
             }
         }
 
         private void Detectsku(int row)
         {
+            //DataGridViewEx dgv = (DataGridViewEx)Enter;
             //サーバー接続
             string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
             MySqlConnection conn = new MySqlConnection(connstr);
@@ -1624,7 +1686,10 @@ namespace kitahara
                 if (!flgcell2)
                     MessageBox.Show("該当する商品がありません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 flgcell2 = true;
-                dataGridView2.CurrentCell = dataGridView2[colhinban, row];
+                //入力した値をキャンセルして元に戻すには、次のようにする
+                //dgv.CancelEdit();
+                //キャンセルする
+                //e.Cancel = true;
                 return;
             }
             //テーブル出力

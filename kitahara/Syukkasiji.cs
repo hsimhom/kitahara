@@ -46,6 +46,7 @@ namespace kitahara
         string strkubun = "";
 
         Boolean flgtotal = false;
+        Boolean flgsku0 = false;
         Boolean showsku = true;
 
         const int colno = 0;
@@ -916,12 +917,18 @@ namespace kitahara
                         switch (dataGridView2[kubun, i].Value.ToString())
                         {
                             case "0":
+                                num1 = 0;
                                 num2 = num;
+                                num3 = 0;
                                 break;
                             case "1":
                                 num1 = num;
+                                num2 = 0;
+                                num3 = 0;
                                 break;
                             case "2":
+                                num1 = 0;
+                                num2 = 0;
                                 num3 = num;
                                 break;
                         }
@@ -1003,11 +1010,17 @@ namespace kitahara
                         {
                             case "1":
                                 num1 = num;
+                                num2 = 0;
+                                num3 = 0;
                                 break;
                             case "2":
+                                num1 = 0;
                                 num2 = num;
+                                num3 = 0;
                                 break;
                             case "3":
+                                num1 = 0;
+                                num2 = 0;
                                 num3 = num;
                                 break;
                         }
@@ -1234,7 +1247,7 @@ namespace kitahara
                     }
                     else
                     {
-                        cmd3.Parameters.Add(new MySqlParameter(strsku, 0));
+                        cmd3.Parameters.Add(new MySqlParameter(strsku, (object)0));
                     }
                     l++;
                 }
@@ -1471,6 +1484,8 @@ namespace kitahara
                     break;
                 case syukkasijisu:
                     showsku = true;
+                    Showsku(dataGridView2.CurrentCellAddress.Y);
+                    flgtotal = false;
                     break;
 
 
@@ -1509,8 +1524,7 @@ namespace kitahara
                     case syukkasijisu:
                         //if (flgtotal)
                         //{
-                            Showsku(dataGridView2.CurrentCellAddress.Y);
-                            flgtotal = false;
+                            
                             dataGridView2[syukkasijisu, dataGridView2.CurrentCellAddress.Y].Value = total;
                             //SendKeys.Send("{TAB}");
                             //e.Handled = true;
@@ -1720,6 +1734,7 @@ namespace kitahara
             if (flgsku == "True")
             {
                 flgsizecolor[row] = true;
+                flgsku0 = true;
 
                 Sizecolor2 sc = new Sizecolor2();
                 if (iKubun == 2)

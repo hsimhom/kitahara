@@ -41,12 +41,12 @@ namespace kitahara
             string tancd = "";
             string syukasu = "";
             string urikin = "";
-            int ihattyusu = 0;
+            //int ihattyusu = 0;
             int itzaiko = 0;
-            int inyukasu = 0;
-            int ijittusu = 0;
-            int isyukasu = 0;
-            int igzaiko = 0;
+            //int inyukasu = 0;
+            //int ijittusu = 0;
+            //int isyukasu = 0;
+            //int igzaiko = 0;
 
             long iHinban = 0;
             string sShohinmei = "";
@@ -84,7 +84,7 @@ namespace kitahara
             // データを格納するテーブル作成
             DataTable dt = new DataTable();
 
-            DateTime dt0;
+            //DateTime dt0;
             
             
 
@@ -209,7 +209,7 @@ namespace kitahara
                     if (nkbn == "2")
                         iHatyusu = int.Parse(syukasu);
                     else
-                        ihattyusu = 0;
+                        iHatyusu = 0;
                     //入荷数
                     if (nkbn == "3")
                         iNyukasu = int.Parse(syukasu);

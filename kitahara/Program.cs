@@ -16,11 +16,11 @@ namespace kitahara
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new Nyukanyuryoku());
+            Application.Run(new Nyukanyuryoku());
             //Application.Run(new Sizecolor());
             //Application.Run(new Syukkasiji());
             //Application.Run(new ZaikoRireki_View());
-            Application.Run(new ZaikoRireki());
+            //Application.Run(new ZaikoRireki());
         }
     }
 }
