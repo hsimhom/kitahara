@@ -38,6 +38,7 @@ namespace kitahara
             string ymd = "";
             string nkbn = "";
             string dkbn = "";
+            string skbn = "";
             string tancd = "";
             string syukasu = "";
             string urikin = "";
@@ -51,7 +52,7 @@ namespace kitahara
             long iHinban = 0;
             string sShohinmei = "";
             string sYmd = "";
-            string sNkbn = "";
+            string sKbn = "";
             string sTancd = "";
             string sTorimei = "";
             int iHatyusu = 0;
@@ -110,10 +111,12 @@ namespace kitahara
             }
 
             //SQL文
-            string sql = "select nyukasoko as socd, shiresaki as saki, hinban, shohinmei, nyukaymd as ymd, nkbn, 0 as dkbn, tancd, syukasu, 0 as urikin from nyukalog " +
+            string sql = "select nyukasoko as socd, shiresaki as saki, hinban, shohinmei, nyukaymd as ymd, 0 as nkbn, nkbn as dkbn, 0 as skbn, tancd, syukasu, 0 as urikin " +
+                "from nyukalog " +
                 "where hinban > 0" + sql01 + sql02 + sql3 + sql4 + 
                 " union all " +
-                "select syukosocd as socd, tokuisaki as saki, hinban, shohinmei, sijibi as ymd, nkbn, syukasu as dkbn, tancd, 0 as syukasu, urikin from syukalog " +
+                "select syukosocd as socd, tokuisaki as saki, hinban, shohinmei, sijibi as ymd, nkbn, 0 as dkbn, syukasu as skbn, tancd, 0 as syukasu, urikin " +
+                "from syukalog " +
                 "where hinban > 0" +　sql11 + sql12 + sql3 + sql4 +
                 " order by hinban, ymd";
             
@@ -133,6 +136,7 @@ namespace kitahara
                 ymd = reader["ymd"].ToString().Substring(0, 10);
                 nkbn = reader["nkbn"].ToString();
                 dkbn = reader["dkbn"].ToString();
+                skbn = reader["skbn"].ToString();
                 tancd = reader["tancd"].ToString();
                 syukasu = reader["syukasu"].ToString();
                 urikin = reader["urikin"].ToString();
@@ -156,26 +160,26 @@ namespace kitahara
                 cmd1.Connection.Open();
 
                 //入荷入力データの場合
-                if (dkbn == "0")
+                if (nkbn == "0")
                 {
                     //区分
-                    switch (nkbn)
+                    switch (dkbn)
                     {
                         case "1":
-                            sNkbn = "受注";
+                            sKbn = "受注";
                             break;
                         case "2":
-                            sNkbn = "発注";
+                            sKbn = "取置";
                             break;
                         case "3":
-                            sNkbn = "入荷";
+                            sKbn = "入荷";
                             break;
                         case "4":
-                            sNkbn = "取置";
+                            sKbn = "発注";
                             break;
                     }
                     //取引先名
-                    switch (nkbn)
+                    switch (dkbn)
                     {
                         case "1":
                             cmd1 = new MySqlCommand("select tokuisakimei from tokuisaki where tokuicd = @tokuicd", conn);
@@ -206,17 +210,17 @@ namespace kitahara
                             break;
                     }
                     //発注数
-                    if (nkbn == "2")
+                    if (dkbn == "4")
                         iHatyusu = int.Parse(syukasu);
                     else
                         iHatyusu = 0;
                     //入荷数
-                    if (nkbn == "3")
+                    if (dkbn == "3")
                         iNyukasu = int.Parse(syukasu);
                     else
                         iNyukasu = 0;
                     //受注数
-                    if (nkbn == "1")
+                    if (dkbn == "1")
                     {
                         iJutyusu = int.Parse(syukasu);
                         if (!flg)
@@ -224,11 +228,7 @@ namespace kitahara
                             iJutyusu_bk = iJutyusu;
                             flg = true;
                         }
-                        else
-                        {
-                            iJutyusu = iJutyusu_bk - iNyukasu;
-                        }
-                            
+                        
                     }
                     else
                         iJutyusu = 0;
@@ -242,14 +242,17 @@ namespace kitahara
                     //受注残
                     iJzan = 0;
                     //取置在庫
-                    iTzaiko = 0;
+                    if (dkbn == "2")
+                        iTzaiko = int.Parse(syukasu);
+                    else
+                        iTzaiko = 0;
                 }
                 
                 //出荷指示入力データの場合
                 else
                 {
                     //区分
-                    sNkbn = "出荷";
+                    sKbn = "出荷";
                     //取引先名
                     cmd1 = new MySqlCommand("select tokuisakimei from tokuisaki where tokuicd = @tokuicd", conn);
                     cmd1.Parameters.Add(new MySqlParameter("tokuicd", saki));
@@ -267,20 +270,23 @@ namespace kitahara
                     //受注数
                     iJutyusu = 0;
                     //出荷指示数
-                    iSyukasiji = int.Parse(urikin);
+                    if (skbn == "0")
+                        iSyukasiji = int.Parse(urikin);
+                    else
+                        iSyukasiji = 0;
                     //発注残
                     iHzan = 0;
                     //受注残
                     iJzan = 0;
                     //取置在庫
-                    if (nkbn == "4")
+                    if (skbn == "2")
                         itzaiko = int.Parse(urikin);
                     else
                         itzaiko = 0;
                     
                 }
 
-                procucts.Add(new Product(iHinban, sShohinmei, sYmd, sNkbn, sTancd, sTorimei, iHatyusu, iNyukasu, iJutyusu, iSyukasiji,
+                procucts.Add(new Product(iHinban, sShohinmei, sYmd, sKbn, sTancd, sTorimei, iHatyusu, iNyukasu, iJutyusu, iSyukasiji,
                     iHzan, iJzan, iTzaiko));
             }
             if (kubun == "1") {
@@ -355,6 +361,8 @@ namespace kitahara
                 this.Close();
             }
         }
+
+        // 
         static int Utf8ToSjis(string fname1, string fname2)
         {
             // ※既存ファイルへの上書きチェック等は別途行ってください

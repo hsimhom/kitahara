@@ -125,6 +125,19 @@ namespace kitahara
                     else
                         txtHinban1.Focus();
                     break;
+                case "txtHinban1":
+                    txtHinban2.Focus();
+                    break;
+                case "txtHinban2":
+                    if (iKubun == 1)
+                        btn_Do.Focus();
+                    else
+                        txtCsv.Focus();
+                    break;
+                case "txtCsv":
+                    btn_Do.Focus();
+                    break;
+
             }
         }
         private void btn_Do_Click(object sender, EventArgs e)
