@@ -40,6 +40,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label22 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.txtTyui = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
@@ -82,9 +83,8 @@
             this.txtBiko3 = new System.Windows.Forms.TextBox();
             this.txtBiko4 = new System.Windows.Forms.TextBox();
             this.label21 = new System.Windows.Forms.Label();
-            this.dataGridView2 = new System.Windows.Forms.DataGridViewEx();
-            this.label22 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
+            this.dataGridView2 = new System.Windows.Forms.DataGridViewEx();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
@@ -229,11 +229,22 @@
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(13, 16);
+            this.panel1.Location = new System.Drawing.Point(13, 5);
             this.panel1.Margin = new System.Windows.Forms.Padding(4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1297, 207);
+            this.panel1.Size = new System.Drawing.Size(1297, 202);
             this.panel1.TabIndex = 5;
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.BackColor = System.Drawing.Color.LightGreen;
+            this.label22.Font = new System.Drawing.Font("Meiryo UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label22.Location = new System.Drawing.Point(585, 12);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(480, 20);
+            this.label22.TabIndex = 40;
+            this.label22.Text = "計算在庫＝現物在庫＋発注数ー入荷数＋受注数ー出荷数ー取置在庫";
             // 
             // label20
             // 
@@ -604,8 +615,10 @@
             // 
             // btnEnd
             // 
+            this.btnEnd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEnd.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.btnEnd.Location = new System.Drawing.Point(1180, 12);
+            this.btnEnd.Location = new System.Drawing.Point(507, 12);
             this.btnEnd.Margin = new System.Windows.Forms.Padding(4);
             this.btnEnd.Name = "btnEnd";
             this.btnEnd.Size = new System.Drawing.Size(85, 30);
@@ -617,8 +630,10 @@
             // 
             // btnTouroku
             // 
+            this.btnTouroku.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnTouroku.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.btnTouroku.Location = new System.Drawing.Point(1036, 12);
+            this.btnTouroku.Location = new System.Drawing.Point(363, 12);
             this.btnTouroku.Margin = new System.Windows.Forms.Padding(4);
             this.btnTouroku.Name = "btnTouroku";
             this.btnTouroku.Size = new System.Drawing.Size(85, 30);
@@ -630,8 +645,10 @@
             // 
             // btnCancel
             // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.btnCancel.Location = new System.Drawing.Point(875, 12);
+            this.btnCancel.Location = new System.Drawing.Point(202, 12);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(85, 30);
@@ -648,16 +665,16 @@
             this.panel2.Controls.Add(this.btnTouroku);
             this.panel2.Controls.Add(this.btnCancel);
             this.panel2.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.panel2.Location = new System.Drawing.Point(3, 797);
+            this.panel2.Location = new System.Drawing.Point(684, 681);
             this.panel2.Margin = new System.Windows.Forms.Padding(4);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1398, 55);
+            this.panel2.Size = new System.Drawing.Size(684, 55);
             this.panel2.TabIndex = 6;
             // 
             // txtBiko1
             // 
             this.txtBiko1.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.txtBiko1.Location = new System.Drawing.Point(147, 683);
+            this.txtBiko1.Location = new System.Drawing.Point(147, 625);
             this.txtBiko1.Margin = new System.Windows.Forms.Padding(4);
             this.txtBiko1.Name = "txtBiko1";
             this.txtBiko1.Size = new System.Drawing.Size(529, 24);
@@ -667,7 +684,7 @@
             // txtBiko2
             // 
             this.txtBiko2.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.txtBiko2.Location = new System.Drawing.Point(146, 711);
+            this.txtBiko2.Location = new System.Drawing.Point(146, 653);
             this.txtBiko2.Margin = new System.Windows.Forms.Padding(4);
             this.txtBiko2.Name = "txtBiko2";
             this.txtBiko2.Size = new System.Drawing.Size(529, 24);
@@ -677,7 +694,7 @@
             // txtBiko3
             // 
             this.txtBiko3.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.txtBiko3.Location = new System.Drawing.Point(147, 739);
+            this.txtBiko3.Location = new System.Drawing.Point(147, 681);
             this.txtBiko3.Margin = new System.Windows.Forms.Padding(4);
             this.txtBiko3.Name = "txtBiko3";
             this.txtBiko3.Size = new System.Drawing.Size(529, 24);
@@ -687,7 +704,7 @@
             // txtBiko4
             // 
             this.txtBiko4.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.txtBiko4.Location = new System.Drawing.Point(147, 766);
+            this.txtBiko4.Location = new System.Drawing.Point(147, 708);
             this.txtBiko4.Margin = new System.Windows.Forms.Padding(4);
             this.txtBiko4.Name = "txtBiko4";
             this.txtBiko4.Size = new System.Drawing.Size(529, 24);
@@ -699,13 +716,24 @@
             this.label21.AutoSize = true;
             this.label21.BackColor = System.Drawing.Color.DeepSkyBlue;
             this.label21.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label21.Location = new System.Drawing.Point(67, 706);
+            this.label21.Location = new System.Drawing.Point(67, 648);
             this.label21.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(68, 51);
             this.label21.TabIndex = 21;
             this.label21.Text = "\r\n　備考　\r\n               \r\n";
             this.label21.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.BackColor = System.Drawing.Color.LightGreen;
+            this.label23.Font = new System.Drawing.Font("Meiryo UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label23.Location = new System.Drawing.Point(736, 625);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(303, 20);
+            this.label23.TabIndex = 22;
+            this.label23.Text = "出庫区分→０：在庫　１：受注　２：取置";
             // 
             // dataGridView2
             // 
@@ -724,12 +752,12 @@
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridView2.Location = new System.Drawing.Point(12, 231);
+            this.dataGridView2.Location = new System.Drawing.Point(12, 201);
             this.dataGridView2.Margin = new System.Windows.Forms.Padding(4);
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.RowHeadersVisible = false;
             this.dataGridView2.RowTemplate.Height = 21;
-            this.dataGridView2.Size = new System.Drawing.Size(1389, 421);
+            this.dataGridView2.Size = new System.Drawing.Size(1356, 420);
             this.dataGridView2.TabIndex = 13;
             this.dataGridView2.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellEnter);
             this.dataGridView2.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dataGridView2_CellParsing);
@@ -739,34 +767,12 @@
             this.dataGridView2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridView2_KeyDown);
             this.dataGridView2.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.dataGridView2_PreviewKeyDown);
             // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.BackColor = System.Drawing.Color.LightGreen;
-            this.label22.Font = new System.Drawing.Font("Meiryo UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label22.Location = new System.Drawing.Point(585, 12);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(480, 20);
-            this.label22.TabIndex = 40;
-            this.label22.Text = "計算在庫＝現物在庫＋発注数ー入荷数＋受注数ー出荷数ー取置在庫";
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.BackColor = System.Drawing.Color.LightGreen;
-            this.label23.Font = new System.Drawing.Font("Meiryo UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label23.Location = new System.Drawing.Point(736, 683);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(303, 20);
-            this.label23.TabIndex = 22;
-            this.label23.Text = "出庫区分→０：在庫　１：受注　２：取置";
-            // 
             // Syukkasiji
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1414, 855);
+            this.ClientSize = new System.Drawing.Size(1373, 741);
             this.Controls.Add(this.label23);
             this.Controls.Add(this.label21);
             this.Controls.Add(this.txtBiko4);

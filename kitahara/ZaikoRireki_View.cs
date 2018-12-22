@@ -59,8 +59,8 @@ namespace kitahara
             int iNyukasu = 0;
             int iJutyusu = 0;
             int iSyukasiji = 0;
-            int iHzan = 0;
-            int iJzan = 0;
+            int iJsyuka = 0;
+            int iTsyuka = 0;
             int iTzaiko = 0;
 
             Boolean flg = false;
@@ -194,7 +194,10 @@ namespace kitahara
                             
                             break;
                         case "2":
+                            sTorimei = "";
+                            break;
                         case "3":
+                        case "4":
                             cmd1 = new MySqlCommand("select shiresakimei from shiresaki where scd = @scd", conn);
                             cmd1.Parameters.Add(new MySqlParameter("scd", saki));
                             reader1 = cmd1.ExecuteReader();
@@ -204,9 +207,6 @@ namespace kitahara
                             }
                             cmd1.Connection.Close();
                             cmd1.Connection.Open(); 
-                            break;
-                        case "4":
-                            sTorimei = "取置";
                             break;
                     }
                     //発注数
@@ -223,29 +223,16 @@ namespace kitahara
                     if (dkbn == "1")
                     {
                         iJutyusu = int.Parse(syukasu);
-                        if (!flg)
-                        {
-                            iJutyusu_bk = iJutyusu;
-                            flg = true;
-                        }
-                        
                     }
                     else
                         iJutyusu = 0;
                     //出荷指示数
                     iSyukasiji = 0;
-                    //発注残
-                    if (flg)
-                        iHzan = iJutyusu_bk - iNyukasu;
-                    else
-                        iHzan = 0;
-                    //受注残
-                    iJzan = 0;
-                    //取置在庫
-                    if (dkbn == "2")
-                        iTzaiko = int.Parse(syukasu);
-                    else
-                        iTzaiko = 0;
+                    //受注から出荷
+                    iJsyuka = 0;
+                    //取置から出荷
+                    iTsyuka = 0;
+                    
                 }
                 
                 //出荷指示入力データの場合
@@ -274,20 +261,21 @@ namespace kitahara
                         iSyukasiji = int.Parse(urikin);
                     else
                         iSyukasiji = 0;
-                    //発注残
-                    iHzan = 0;
-                    //受注残
-                    iJzan = 0;
-                    //取置在庫
-                    if (skbn == "2")
-                        itzaiko = int.Parse(urikin);
+                    //受注から出荷
+                    if (skbn == "1")
+                        iJsyuka = int.Parse(urikin);
                     else
-                        itzaiko = 0;
+                        iJsyuka = 0;
+                    //取置から出荷
+                    if (skbn == "2")
+                        iTsyuka = int.Parse(urikin);
+                    else
+                        iTsyuka = 0;
                     
                 }
 
                 procucts.Add(new Product(iHinban, sShohinmei, sYmd, sKbn, sTancd, sTorimei, iHatyusu, iNyukasu, iJutyusu, iSyukasiji,
-                    iHzan, iJzan, iTzaiko));
+                    iJsyuka, iTsyuka));
             }
             if (kubun == "1") {
                 dataGridView1.DataSource = procucts;
@@ -321,27 +309,27 @@ namespace kitahara
                 dataGridView1.Columns[9].HeaderText = "出荷指示数";
                 dataGridView1.Columns[9].Width = 100;
                 dataGridView1.Columns[9].ReadOnly = true;
-                dataGridView1.Columns[10].HeaderText = "発注残";
-                dataGridView1.Columns[10].Width = 70;
+                dataGridView1.Columns[10].HeaderText = "受注から出荷";
+                dataGridView1.Columns[10].Width = 100;
                 dataGridView1.Columns[10].ReadOnly = true;
-                dataGridView1.Columns[11].HeaderText = "受注残";
-                dataGridView1.Columns[11].Width = 70;
+                dataGridView1.Columns[11].HeaderText = "取置から出荷";
+                dataGridView1.Columns[11].Width = 100;
                 dataGridView1.Columns[11].ReadOnly = true;
-                dataGridView1.Columns[12].HeaderText = "取置在庫数";
-                dataGridView1.Columns[12].Width = 110;
-                dataGridView1.Columns[12].ReadOnly = true;
+                
 
                 // カラムの右寄せ3桁区切り設定
-                for (int i = 0; i <= 12; i++)
+                for (int i = 0; i <= 11; i++)
                 {
                     //dataGridView1.Columns[i].DefaultCellStyle.Format = "#,0";
                     dataGridView1.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
                 }
-                for (int i = 6; i <= 12; i++)
+                for (int i = 6; i <= 11; i++)
                 {
                     dataGridView1.Columns[i].DefaultCellStyle.Format = "#,0";
                     dataGridView1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
                 }
+
+                //dataGridView1.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.Silver;
 
             }
             else if (kubun == "2"){

@@ -91,7 +91,7 @@ namespace kitahara
             dataGridView2.Columns[colhinban].HeaderText = "品番";
             dataGridView2.Columns[colhinban].Width = 100;
             dataGridView2.Columns[colsyohinmei].HeaderText = "商品名";
-            dataGridView2.Columns[colsyohinmei].Width = 200;
+            dataGridView2.Columns[colsyohinmei].Width = 250;
             dataGridView2.Columns[colsyohinmei].ReadOnly = true;
             dataGridView2.Columns[colsuryou].HeaderText = "数量";
             dataGridView2.Columns[colsuryou].Width = 80;
