@@ -11,7 +11,7 @@ namespace kitahara
 {
     class Product
     {
-        public long Hinban { get; set; }
+        public string Hinban { get; set; }
         public string Shohinmei { get; set; }
         public string Ymd { get; set; }
         
@@ -28,7 +28,7 @@ namespace kitahara
         //public int Tzaiko { get; set; }
         
 
-        public Product(long hinban, string shohinmei, string ymd, string nkbn, string tancd, string torimei, int hatyusu, int nyukasu, int jutyusu, int syukasiji
+        public Product(string hinban, string shohinmei, string ymd, string nkbn, string tancd, string torimei, int hatyusu, int nyukasu, int jutyusu, int syukasiji
             , int jsyuka, int tsyuka)
         {
             Hinban = hinban;

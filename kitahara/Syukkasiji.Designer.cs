@@ -36,10 +36,12 @@
             this.txtSijibi = new System.Windows.Forms.TextBox();
             this.txtSyukosouko = new System.Windows.Forms.TextBox();
             this.txtTantoucode = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.txtTyui = new System.Windows.Forms.TextBox();
@@ -71,9 +73,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.txtKubun = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.txtTantoumei = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.btnEnd = new System.Windows.Forms.Button();
             this.btnTouroku = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -93,7 +93,7 @@
             // txtTokuisakimei1
             // 
             this.txtTokuisakimei1.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.txtTokuisakimei1.Location = new System.Drawing.Point(185, 115);
+            this.txtTokuisakimei1.Location = new System.Drawing.Point(181, 115);
             this.txtTokuisakimei1.Margin = new System.Windows.Forms.Padding(4);
             this.txtTokuisakimei1.Name = "txtTokuisakimei1";
             this.txtTokuisakimei1.ReadOnly = true;
@@ -104,7 +104,7 @@
             // txtSoukomei
             // 
             this.txtSoukomei.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.txtSoukomei.Location = new System.Drawing.Point(185, 60);
+            this.txtSoukomei.Location = new System.Drawing.Point(181, 60);
             this.txtSoukomei.Margin = new System.Windows.Forms.Padding(4);
             this.txtSoukomei.Name = "txtSoukomei";
             this.txtSoukomei.ReadOnly = true;
@@ -115,7 +115,7 @@
             // txtTokuisakicode
             // 
             this.txtTokuisakicode.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.txtTokuisakicode.Location = new System.Drawing.Point(79, 115);
+            this.txtTokuisakicode.Location = new System.Drawing.Point(74, 115);
             this.txtTokuisakicode.Margin = new System.Windows.Forms.Padding(4);
             this.txtTokuisakicode.Name = "txtTokuisakicode";
             this.txtTokuisakicode.Size = new System.Drawing.Size(103, 24);
@@ -124,7 +124,7 @@
             // txtSijibi
             // 
             this.txtSijibi.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.txtSijibi.Location = new System.Drawing.Point(79, 88);
+            this.txtSijibi.Location = new System.Drawing.Point(74, 88);
             this.txtSijibi.Margin = new System.Windows.Forms.Padding(4);
             this.txtSijibi.Name = "txtSijibi";
             this.txtSijibi.Size = new System.Drawing.Size(103, 24);
@@ -133,7 +133,7 @@
             // txtSyukosouko
             // 
             this.txtSyukosouko.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.txtSyukosouko.Location = new System.Drawing.Point(79, 60);
+            this.txtSyukosouko.Location = new System.Drawing.Point(74, 60);
             this.txtSyukosouko.Margin = new System.Windows.Forms.Padding(4);
             this.txtSyukosouko.Name = "txtSyukosouko";
             this.txtSyukosouko.Size = new System.Drawing.Size(103, 24);
@@ -142,50 +142,19 @@
             // txtTantoucode
             // 
             this.txtTantoucode.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.txtTantoucode.Location = new System.Drawing.Point(79, 33);
+            this.txtTantoucode.Location = new System.Drawing.Point(74, 33);
             this.txtTantoucode.Margin = new System.Windows.Forms.Padding(4);
             this.txtTantoucode.Name = "txtTantoucode";
             this.txtTantoucode.Size = new System.Drawing.Size(103, 24);
             this.txtTantoucode.TabIndex = 3;
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.BackColor = System.Drawing.Color.DeepSkyBlue;
-            this.label4.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label4.Location = new System.Drawing.Point(12, 122);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(56, 17);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "得意先　";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.BackColor = System.Drawing.Color.DeepSkyBlue;
-            this.label3.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label3.Location = new System.Drawing.Point(12, 94);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(56, 17);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "指示日　";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.Color.DeepSkyBlue;
-            this.label2.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label2.Location = new System.Drawing.Point(12, 65);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(60, 17);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "出庫倉庫";
-            // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.label22);
             this.panel1.Controls.Add(this.label20);
             this.panel1.Controls.Add(this.txtTyui);
@@ -217,7 +186,6 @@
             this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.txtKubun);
-            this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.txtTantoumei);
             this.panel1.Controls.Add(this.txtTokuisakimei1);
             this.panel1.Controls.Add(this.txtSoukomei);
@@ -225,15 +193,66 @@
             this.panel1.Controls.Add(this.txtSijibi);
             this.panel1.Controls.Add(this.txtSyukosouko);
             this.panel1.Controls.Add(this.txtTantoucode);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label1);
             this.panel1.Location = new System.Drawing.Point(13, 5);
             this.panel1.Margin = new System.Windows.Forms.Padding(4);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1297, 202);
             this.panel1.TabIndex = 5;
+            // 
+            // label5
+            // 
+            this.label5.BackColor = System.Drawing.Color.DeepSkyBlue;
+            this.label5.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label5.Location = new System.Drawing.Point(9, 118);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(65, 20);
+            this.label5.TabIndex = 50;
+            this.label5.Text = "得意先";
+            // 
+            // label4
+            // 
+            this.label4.BackColor = System.Drawing.Color.DeepSkyBlue;
+            this.label4.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label4.Location = new System.Drawing.Point(9, 90);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(65, 20);
+            this.label4.TabIndex = 49;
+            this.label4.Text = "指示日";
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.DeepSkyBlue;
+            this.label3.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label3.Location = new System.Drawing.Point(9, 63);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(65, 20);
+            this.label3.TabIndex = 48;
+            this.label3.Text = "出庫倉庫";
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.DeepSkyBlue;
+            this.label2.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label2.Location = new System.Drawing.Point(9, 36);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(65, 20);
+            this.label2.TabIndex = 47;
+            this.label2.Text = "担当者";
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.DeepSkyBlue;
+            this.label1.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label1.Location = new System.Drawing.Point(9, 6);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(65, 20);
+            this.label1.TabIndex = 46;
+            this.label1.Text = "入力区分";
             // 
             // label22
             // 
@@ -509,7 +528,7 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label8.Location = new System.Drawing.Point(507, 120);
+            this.label8.Location = new System.Drawing.Point(503, 120);
             this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(34, 17);
@@ -519,7 +538,7 @@
             // txtTokuisakimei3
             // 
             this.txtTokuisakimei3.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.txtTokuisakimei3.Location = new System.Drawing.Point(185, 168);
+            this.txtTokuisakimei3.Location = new System.Drawing.Point(181, 168);
             this.txtTokuisakimei3.Margin = new System.Windows.Forms.Padding(4);
             this.txtTokuisakimei3.Name = "txtTokuisakimei3";
             this.txtTokuisakimei3.Size = new System.Drawing.Size(316, 24);
@@ -529,7 +548,7 @@
             // txtTokuisakimei2
             // 
             this.txtTokuisakimei2.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.txtTokuisakimei2.Location = new System.Drawing.Point(185, 141);
+            this.txtTokuisakimei2.Location = new System.Drawing.Point(181, 141);
             this.txtTokuisakimei2.Margin = new System.Windows.Forms.Padding(4);
             this.txtTokuisakimei2.Name = "txtTokuisakimei2";
             this.txtTokuisakimei2.Size = new System.Drawing.Size(316, 24);
@@ -539,7 +558,7 @@
             // txtLogno
             // 
             this.txtLogno.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.txtLogno.Location = new System.Drawing.Point(449, 3);
+            this.txtLogno.Location = new System.Drawing.Point(443, 3);
             this.txtLogno.Margin = new System.Windows.Forms.Padding(4);
             this.txtLogno.Name = "txtLogno";
             this.txtLogno.Size = new System.Drawing.Size(103, 24);
@@ -561,7 +580,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label6.Location = new System.Drawing.Point(185, 12);
+            this.label6.Location = new System.Drawing.Point(181, 12);
             this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(193, 17);
@@ -571,47 +590,23 @@
             // txtKubun
             // 
             this.txtKubun.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.txtKubun.Location = new System.Drawing.Point(79, 4);
+            this.txtKubun.Location = new System.Drawing.Point(74, 4);
             this.txtKubun.Margin = new System.Windows.Forms.Padding(4);
             this.txtKubun.Name = "txtKubun";
             this.txtKubun.Size = new System.Drawing.Size(103, 24);
             this.txtKubun.TabIndex = 1;
             // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.BackColor = System.Drawing.Color.DeepSkyBlue;
-            this.label5.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label5.Location = new System.Drawing.Point(12, 11);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(60, 17);
-            this.label5.TabIndex = 11;
-            this.label5.Text = "入力区分";
-            // 
             // txtTantoumei
             // 
             this.txtTantoumei.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtTantoumei.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.txtTantoumei.Location = new System.Drawing.Point(188, 39);
+            this.txtTantoumei.Location = new System.Drawing.Point(184, 39);
             this.txtTantoumei.Margin = new System.Windows.Forms.Padding(4);
             this.txtTantoumei.Name = "txtTantoumei";
             this.txtTantoumei.ReadOnly = true;
             this.txtTantoumei.Size = new System.Drawing.Size(159, 17);
             this.txtTantoumei.TabIndex = 9;
             this.txtTantoumei.TabStop = false;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.Color.DeepSkyBlue;
-            this.label1.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label1.Location = new System.Drawing.Point(12, 39);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 17);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "担当者　";
             // 
             // btnEnd
             // 
@@ -763,6 +758,7 @@
             this.dataGridView2.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dataGridView2_CellParsing);
             this.dataGridView2.CellValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellValidated);
             this.dataGridView2.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dataGridView2_CellValidating);
+            this.dataGridView2.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView2_DataError);
             this.dataGridView2.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView2_EditingControlShowing);
             this.dataGridView2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridView2_KeyDown);
             this.dataGridView2.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.dataGridView2_PreviewKeyDown);
@@ -808,19 +804,14 @@
         private System.Windows.Forms.TextBox txtSijibi;
         private System.Windows.Forms.TextBox txtSyukosouko;
         private System.Windows.Forms.TextBox txtTantoucode;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox txtTantoumei;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnEnd;
         private System.Windows.Forms.Button btnTouroku;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox txtKubun;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.TextBox txtTyui;
         private System.Windows.Forms.Label label19;
@@ -856,5 +847,10 @@
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
     }
 }

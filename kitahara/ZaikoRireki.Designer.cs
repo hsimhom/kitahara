@@ -29,14 +29,10 @@
         private void InitializeComponent()
         {
             this.txtKubun = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.txtDate1 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.txtHinban1 = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.txtCsv = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.txtHinban2 = new System.Windows.Forms.TextBox();
             this.txtDate2 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -44,6 +40,10 @@
             this.label7 = new System.Windows.Forms.Label();
             this.btn_End = new System.Windows.Forms.Button();
             this.btn_Do = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // txtKubun
@@ -53,17 +53,6 @@
             this.txtKubun.Name = "txtKubun";
             this.txtKubun.Size = new System.Drawing.Size(48, 20);
             this.txtKubun.TabIndex = 0;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.BackColor = System.Drawing.Color.DeepSkyBlue;
-            this.label6.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label6.Location = new System.Drawing.Point(12, 11);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(33, 13);
-            this.label6.TabIndex = 18;
-            this.label6.Text = "区分";
             // 
             // label8
             // 
@@ -84,17 +73,6 @@
             this.txtDate1.Size = new System.Drawing.Size(90, 20);
             this.txtDate1.TabIndex = 1;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.Color.DeepSkyBlue;
-            this.label1.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label1.Location = new System.Drawing.Point(12, 40);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(33, 13);
-            this.label1.TabIndex = 21;
-            this.label1.Text = "日付";
-            // 
             // txtHinban1
             // 
             this.txtHinban1.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
@@ -103,17 +81,6 @@
             this.txtHinban1.Size = new System.Drawing.Size(90, 20);
             this.txtHinban1.TabIndex = 3;
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.Color.DeepSkyBlue;
-            this.label2.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label2.Location = new System.Drawing.Point(12, 70);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(33, 13);
-            this.label2.TabIndex = 23;
-            this.label2.Text = "品番";
-            // 
             // txtCsv
             // 
             this.txtCsv.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
@@ -121,17 +88,6 @@
             this.txtCsv.Name = "txtCsv";
             this.txtCsv.Size = new System.Drawing.Size(216, 20);
             this.txtCsv.TabIndex = 5;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.BackColor = System.Drawing.Color.DeepSkyBlue;
-            this.label3.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label3.Location = new System.Drawing.Point(12, 103);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(64, 13);
-            this.label3.TabIndex = 25;
-            this.label3.Text = "データ出力";
             // 
             // txtHinban2
             // 
@@ -196,11 +152,59 @@
             this.btn_Do.UseVisualStyleBackColor = true;
             this.btn_Do.Click += new System.EventHandler(this.btn_Do_Click);
             // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.DeepSkyBlue;
+            this.label1.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label1.Location = new System.Drawing.Point(6, 6);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(65, 20);
+            this.label1.TabIndex = 47;
+            this.label1.Text = "区分";
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.DeepSkyBlue;
+            this.label2.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label2.Location = new System.Drawing.Point(6, 98);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(65, 20);
+            this.label2.TabIndex = 48;
+            this.label2.Text = "データ出力";
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.DeepSkyBlue;
+            this.label3.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label3.Location = new System.Drawing.Point(6, 65);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(65, 20);
+            this.label3.TabIndex = 49;
+            this.label3.Text = "品番";
+            // 
+            // label6
+            // 
+            this.label6.BackColor = System.Drawing.Color.DeepSkyBlue;
+            this.label6.Font = new System.Drawing.Font("Meiryo UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label6.Location = new System.Drawing.Point(6, 35);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(65, 20);
+            this.label6.TabIndex = 50;
+            this.label6.Text = "日付";
+            // 
             // ZaikoRireki
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(329, 187);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.btn_Do);
             this.Controls.Add(this.btn_End);
             this.Controls.Add(this.label7);
@@ -209,13 +213,9 @@
             this.Controls.Add(this.txtDate2);
             this.Controls.Add(this.txtHinban2);
             this.Controls.Add(this.txtCsv);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.txtHinban1);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.txtDate1);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtKubun);
-            this.Controls.Add(this.label6);
             this.Controls.Add(this.label8);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -230,14 +230,10 @@
         #endregion
 
         private System.Windows.Forms.TextBox txtKubun;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox txtDate1;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtHinban1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtCsv;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtHinban2;
         private System.Windows.Forms.TextBox txtDate2;
         private System.Windows.Forms.Label label4;
@@ -245,5 +241,9 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btn_End;
         private System.Windows.Forms.Button btn_Do;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label6;
     }
 }

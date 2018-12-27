@@ -713,6 +713,8 @@ namespace kitahara
             zaiko_update_minas();
             zaiko_update_plus();
             zaiko_update_new();
+            zaiko_update_last(0);
+            zaiko_update_last(0);
             string str = strkubun + "しました。";
             MessageBox.Show(str);
         }
@@ -973,7 +975,7 @@ namespace kitahara
                     else
                     {
                         MySqlCommand cmd1 = new MySqlCommand("update zaiko set jyusyu = jyusyu + @jyusyu, zaisyu = zaisyu + @zaisyu, torisyu = torisyu + @torisyu, " +
-                        "syukasu = syukasu + @syukasu, zaiko = zaiko - @zaiko, syukabi = @syukabi," +
+                        "syukasu = syukasu + @syukasu, torioki = torioki - @torioki, zaiko = zaiko - @zaiko, syukabi = @syukabi," +
                         "sku10 = sku10 - @sku10,sku11 = sku11 - @sku11,sku12 = sku12 - @sku12,sku13 = sku13 - @sku13,sku14 = sku14 - @sku14,sku15 = sku15 - @sku15," +
                         "sku16 = sku16 - @sku16,sku17 = sku17 - @sku17,sku18 = sku18 - @sku18,sku19 = sku19 - @sku19,sku20 = sku20 - @sku20," +
                         "sku21 = sku21 - @sku21, sku22 = sku22 - @sku22, sku23 = sku23 - @sku23, sku24 = sku24 - @sku24, sku25 = sku25 - @sku25," +
@@ -1028,6 +1030,7 @@ namespace kitahara
                         cmd1.Parameters.Add(new MySqlParameter("zaisyu", num2));
                         cmd1.Parameters.Add(new MySqlParameter("torisyu", num3));
                         cmd1.Parameters.Add(new MySqlParameter("syukasu", num));
+                        cmd1.Parameters.Add(new MySqlParameter("torioki", num2));
                         cmd1.Parameters.Add(new MySqlParameter("zaiko", num));
                         DateTime.TryParse(txtSijibi.Text, out dt);
                         cmd1.Parameters.Add(new MySqlParameter("syukabi", dt));
@@ -1062,6 +1065,7 @@ namespace kitahara
                             MessageBox.Show("例外発生:" + ex.Message);
                         }
                     }
+                    zaiko_update_last(i);
                 }
                 i++;
             
@@ -1378,6 +1382,81 @@ namespace kitahara
         }
         #endregion
 
+        #region 在庫マスタ更新処理（担当者コードを倉庫コードにＳＥＴ） zaiko_update_last()
+        private void zaiko_update_last(int i2)
+        {
+            //サーバー接続
+            string connstr = "userid=root; password=baron6533; database = zaiko; Data Source=133.167.117.67;Charset='utf8'";
+            MySqlConnection conn = new MySqlConnection(connstr);
+
+            MySqlCommand cmd = new MySqlCommand("select * from zaiko where souko = @tancd and shocd = @shocd", conn);
+            cmd.Parameters.Add(new MySqlParameter("souko", txtSyukosouko.Text));
+            cmd.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, i2].Value));
+            cmd.Parameters.Add(new MySqlParameter("tancd", txtTantoucode.Text));
+            cmd.Connection.Open();
+            MySqlDataReader reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                if (iDpKubun == 2)
+                {
+                    cmd.Connection.Close();
+                    cmd = new MySqlCommand("update zaiko set torioki = torioki - @torioki where souko = @tancd and shocd = @shocd", conn);
+                    // パラメータ設定
+                    cmd.Parameters.Add(new MySqlParameter("souko", txtSyukosouko.Text));
+                    cmd.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, i2].Value));
+                    cmd.Parameters.Add(new MySqlParameter("tancd", txtTantoucode.Text));
+                    cmd.Parameters.Add(new MySqlParameter("torioki", int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString())));
+                    try
+                    {
+                        // オープン
+                        cmd.Connection.Open();
+                        // 実行
+                        cmd.ExecuteNonQuery();
+                        // 更新IDを取得
+                        //var id = cmd2.ExecuteScalar();
+                        // クローズ
+                        cmd.Connection.Close();
+                    }
+                    catch (SqlException ex)
+                    {
+                        // 例外処理
+                        MessageBox.Show("例外発生:" + ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                cmd.Connection.Close();
+                if (iDpKubun == 2)
+                {
+                    cmd = new MySqlCommand("update zaiko set souko = @tancd, torioki = torioki - @torioki where souko = @souko and shocd = @shocd", conn);
+                    // パラメータ設定
+                    cmd.Parameters.Add(new MySqlParameter("souko", txtSyukosouko.Text));
+                    cmd.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, i2].Value));
+                    cmd.Parameters.Add(new MySqlParameter("tancd", txtTantoucode.Text));
+                    cmd.Parameters.Add(new MySqlParameter("torioki", int.Parse(dataGridView2[syukkasijisu, 0].Value.ToString())));
+                    try
+                    {
+                        // オープン
+                        cmd.Connection.Open();
+                        // 実行
+                        cmd.ExecuteNonQuery();
+                        // 更新IDを取得
+                        //var id = cmd2.ExecuteScalar();
+                        // クローズ
+                        cmd.Connection.Close();
+                    }
+                    catch (SqlException ex)
+                    {
+                        // 例外処理
+                        MessageBox.Show("例外発生:" + ex.Message);
+                    }
+                }
+            }
+
+
+        }
+        #endregion
 
         private void Syukkasiji_Shown(object sender, EventArgs e)
         {
@@ -1876,6 +1955,17 @@ namespace kitahara
             //SendKeys.Send("{TAB}");
 
             dataGridView2.EndEdit();
+        }
+
+        private void dataGridView2_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                MessageBox.Show(this,
+                    string.Format("数値を入力してください。"),
+                    "エラーが発生しました",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 

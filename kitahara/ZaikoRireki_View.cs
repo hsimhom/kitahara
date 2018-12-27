@@ -103,11 +103,11 @@ namespace kitahara
             }
             if (hinban1 != "")
             {
-                sql3 = " and hinban >= " + hinban1;
+                sql3 = " and hinban >= @hinban1";
             }
             if (hinban2 != "")
             {
-                sql4 = " and hinban <= " + hinban2;
+                sql4 = " and hinban <= @hinban2";
             }
 
             //SQL文
@@ -122,7 +122,8 @@ namespace kitahara
             
             //SQL実行
             MySqlCommand cmd = new MySqlCommand(sql, conn1);
-            //cmd.Parameters.Add(new MySqlParameter("shocd", dataGridView2[colhinban, row].Value.ToString()));
+            cmd.Parameters.Add(new MySqlParameter("hinban1", hinban1));
+            cmd.Parameters.Add(new MySqlParameter("hinban2", hinban2));
             MySqlDataReader reader = cmd.ExecuteReader();
             //cmd.Connection.Close();
 
@@ -143,7 +144,7 @@ namespace kitahara
 
                
                 //品番
-                iHinban = long.Parse(hinban);
+                //iHinban = hinban;
                 //商品名
                 sShohinmei = shoinmei;
                 //日付
@@ -274,7 +275,7 @@ namespace kitahara
                     
                 }
 
-                procucts.Add(new Product(iHinban, sShohinmei, sYmd, sKbn, sTancd, sTorimei, iHatyusu, iNyukasu, iJutyusu, iSyukasiji,
+                procucts.Add(new Product(hinban, sShohinmei, sYmd, sKbn, sTancd, sTorimei, iHatyusu, iNyukasu, iJutyusu, iSyukasiji,
                     iJsyuka, iTsyuka));
             }
             if (kubun == "1") {
@@ -318,9 +319,13 @@ namespace kitahara
                 
 
                 // カラムの右寄せ3桁区切り設定
-                for (int i = 0; i <= 11; i++)
+                for (int i = 0; i <= 5; i++)
                 {
                     //dataGridView1.Columns[i].DefaultCellStyle.Format = "#,0";
+                    dataGridView1.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                }
+                for (int i = 6; i <= 11; i++)
+                {
                     dataGridView1.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
                 }
                 for (int i = 6; i <= 11; i++)

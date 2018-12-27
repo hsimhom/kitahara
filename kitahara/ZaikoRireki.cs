@@ -150,14 +150,16 @@ namespace kitahara
                     return;
                 }
             }
+            /*
             if (txtHinban1.Text != "" && txtHinban2.Text != "")
             {
-                if (long.Parse(txtHinban1.Text) > long.Parse(txtHinban2.Text))
+                if (txtHinban1.Text > txtHinban2.Text)
                 {
                     MessageBox.Show("正しい品番を入力してください。");
                     return;
                 }
             }
+            */
             if (!Regex.IsMatch(txtKubun.Text, @"^[1-2]{1}$"))
             {
                 MessageBox.Show("区分を入力してください。");
